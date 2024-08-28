@@ -8,6 +8,7 @@ from typing import Dict, Optional, Union
 from types import SimpleNamespace
 import logging
 from time import time
+import warnings
 # From third-party
 import numpy as np
 from fenics import *
@@ -20,6 +21,8 @@ from worm_rod_engine.pde import PDE, grad, finite_backwards_difference
 from worm_rod_engine.parameter.dimensionless_parameter import default_dimensionless_parameter
 from worm_rod_engine.parameter.numerical_parameter import default_numerical_parameter
 from worm_rod_engine.parameter.output_parameter import default_output_parameter
+
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 if False:
     from fenics import dx

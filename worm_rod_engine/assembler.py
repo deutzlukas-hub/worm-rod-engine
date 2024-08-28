@@ -42,9 +42,6 @@ class OutputAssembler():
         if output_param_name in self.cache:
             return self.cache[output_param_name]
 
-        if output_param_name == 'k':
-            print('k')
-
         func = getattr(PDE, output_param_name)
 
         # Extract the parameter names

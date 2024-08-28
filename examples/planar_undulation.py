@@ -8,7 +8,6 @@ from worm_rod_engine.parameter.numerical_parameter import numerical_argument_par
 from worm_rod_engine.worm import Worm
 from worm_rod_engine.visualize.plot import plot_scalar_field
 
-
 def simulate_planar_undulation():
 
     # Specify outputs of interest
@@ -26,6 +25,8 @@ def simulate_planar_undulation():
     output = worm.solve(5, k0=k0, progress=True)
     assert output[0], 'Simulation failed'
     FS = output[1]
+
+    # Post-process outputs
     r_com = FS.r.mean(axis = 2) # centroid
     r_mp = FS.r[:, :, FS.r.shape[2]//2] # midpoint
     U = np.linalg.norm(np.gradient(r_com, worm.dt, axis=0), axis=1) # swimming speed
@@ -48,7 +49,6 @@ def simulate_planar_undulation():
 
     plot_scalar_field(ax00, FS.k0[:, 0, :], v_lim=v_lim, extent=[0.0, T_sim, 0.0, 1.0])
     plot_scalar_field(ax10, FS.k[:, 0, :],  v_lim=v_lim, extent=[0.0, T_sim, 0.0, 1.0])
-
 
     plt.show()
 
