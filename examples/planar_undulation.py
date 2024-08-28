@@ -26,28 +26,29 @@ def simulate_planar_undulation():
     output = worm.solve(5, k0=k0, progress=True)
     assert output[0], 'Simulation failed'
     FS = output[1]
+    r_com = FS.r.mean(axis = 2) # centroid
+    r_mp = FS.r[:, :, FS.r.shape[2]//2] # midpoint
+    U = np.linalg.norm(np.gradient(r_com, worm.dt, axis=0), axis=1) # swimming speed
+    U_avg = U.mean() # average swimming speed
 
     # Plot outputs
-    gs = plt.GridSpec(5, 1)
-    ax0 = plt.subplot(gs[0])
-    ax1 = plt.subplot(gs[1])
-    ax2 = plt.subplot(gs[2])
-    ax3 = plt.subplot(gs[3])
-    ax4 = plt.subplot(gs[4])
+    gs = plt.GridSpec(2, 2)
+    ax00 = plt.subplot(gs[0, 0])
+    ax10 = plt.subplot(gs[1, 0])
+    ax01 = plt.subplot(gs[0, 1])
+    ax11 = plt.subplot(gs[1, 1])
 
-    for r_arr in FS.r[::50, :, :]:
-        ax0.plot(r_arr[1, :], r_arr[2, :])
+    ax01.plot(r_com[:, 1], r_com[:, 2])
+    ax01.plot(r_mp[:, 1], r_mp[:, 2])
+    ax11.plot(FS.t, U)
+    ax11.plot([FS.t[0], FS.t[-1]], [U_avg, U_avg])
 
-    r_com = FS.r.mean(axis = 2)
-    r_mp = FS.r[:, :, FS.r.shape[2]//2]
+    abs_k_max = np.abs([FS.k0.max(), FS.k.max(), FS.k0.min(), FS.k.min()]).max()
+    v_lim = [-abs_k_max, abs_k_max]
 
-    U = np.linalg.norm(np.gradient(r_com, worm.dt, axis=0), axis=1)
-    ax2.plot(FS.t, U)
+    plot_scalar_field(ax00, FS.k0[:, 0, :], v_lim=v_lim, extent=[0.0, T_sim, 0.0, 1.0])
+    plot_scalar_field(ax10, FS.k[:, 0, :],  v_lim=v_lim, extent=[0.0, T_sim, 0.0, 1.0])
 
-    ax1.plot(r_com[:, 1], r_com[:, 2])
-    ax1.plot(r_mp[:, 1], r_mp[:, 2])
-    plot_scalar_field(ax3, FS.k0[:, 0, :], extent=[0.0, T_sim, 0.0, 1.0])
-    plot_scalar_field(ax4, FS.k[:, 0, :], extent=[0.0, T_sim, 0.0, 1.0])
 
     plt.show()
 
