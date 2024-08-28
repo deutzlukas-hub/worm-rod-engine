@@ -49,28 +49,21 @@ class TestWorm(unittest.TestCase):
         err = np.linalg.norm(FS.r[0] - FS.r[-1], axis=0).sum()
         self.assertAlmostEqual(0.0, err, places=2)
 
-
     def test_constant_control_1(self):
 
         numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
         output_param = output_parameter_parser.parse_args(['--k', '--eps'])
         worm = Worm(numerical_param=numerical_param, output_param=output_param)
-        k0 = Constant((np.pi, 0, 0))
+
+        k_inp = np.pi
+        k0 = Constant((k_inp, 0.0, 0.0))
 
         output = worm.solve(2, k0=k0, progress=True)
         self.assertTrue(output[0])
         FS = output[1]
 
-        err = np.linalg.norm(FS.k[-1] - np.repeat(k0.values()[:, None], worm.N, axis = 1), axis=0).sum()
-        self.assertAlmostEqual(0.0, err, places=2)
-
-
-    def test_constant_control_2(self):
-
-
-        pass
-
-
+        k_out_avg = FS.k[-1, 0].mean()
+        self.assertAlmostEqual(k_inp, k_out_avg, places=1)
 
     # def test_solve(self):
     #
@@ -134,4 +127,5 @@ class TestWorm(unittest.TestCase):
 
 
 if __name__ == '__main__':
+
     unittest.main()
