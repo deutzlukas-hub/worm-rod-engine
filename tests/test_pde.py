@@ -47,7 +47,7 @@ class TestPDE(unittest.TestCase):
             numerical_param = numerical_argument_parser.parse_args(['--dt', str(dt), '--N', str(N)])
             worm = Worm(numerical_param=numerical_param)
 
-            t_arr = np.arange(0, np.pi+0.1*worm.dt, worm.dt)
+            t_arr = np.arange(0, 10*worm.dt+0.1*worm.dt, worm.dt)
             n_t_step = len(t_arr)
             s_arr = np.linspace(0.0, 1.0, worm.N)
 
