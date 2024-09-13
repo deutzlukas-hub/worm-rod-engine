@@ -8,7 +8,7 @@ from fenics import project
 from worm_rod_engine.parameter.numerical_parameter import numerical_argument_parser
 from worm_rod_engine.worm import Worm
 from worm_rod_engine.util import v2f, f2n
-from worm_rod_engine.pdes.util import finite_backwards_difference, finite_difference_coefficients
+from worm_rod_engine.pde.util import finite_backwards_difference, finite_difference_coefficients
 
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 

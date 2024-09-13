@@ -6,8 +6,8 @@ import numpy as np
 # From third-party
 from fenics import *
 # From worm-rod-engine
-from worm_rod_engine.pdes.util import grad, finite_backwards_difference, tag_function_space
-from worm_rod_engine.pdes.cosserat_rod import PDE_Cosserat
+from worm_rod_engine.pde.util import grad, finite_backwards_difference, tag_function_space
+from worm_rod_engine.pde.cosserat_rod import PDE_Cosserat
 from worm_rod_engine.parameter.output_parameter import FUNCTION_KEYS
 
 if False:

@@ -20,8 +20,8 @@ from worm_rod_engine.assembler import OutputAssembler
 from worm_rod_engine.parameter.dimensionless_parameter import default_dimensionless_parameter
 from worm_rod_engine.parameter.numerical_parameter import default_numerical_parameter
 from worm_rod_engine.parameter.output_parameter import default_output_parameter
-from worm_rod_engine.pdes.cosserat_rod_2D import CosseratRod2D
-from worm_rod_engine.pdes.cosserat_rod_3D import CosseratRod3D
+from worm_rod_engine.pde.cosserat_rod_2D import CosseratRod2D
+from worm_rod_engine.pde.cosserat_rod_3D import CosseratRod3D
 
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 

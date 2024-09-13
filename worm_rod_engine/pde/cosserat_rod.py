@@ -7,7 +7,7 @@ from fenics import *
 # From worm-rod-engine
 from worm_rod_engine.util import v2f
 from worm_rod_engine.frame import Frame
-from worm_rod_engine.pdes.util import finite_backwards_difference
+from worm_rod_engine.pde.util import finite_backwards_difference
 
 if TYPE_CHECKING:
     from worm_rod_engine.worm import Worm
