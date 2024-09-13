@@ -1,0 +1,688 @@
+#LyX 2.4 created this file. For more info see https://www.lyx.org/
+\lyxformat 620
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children no
+\language american
+\language_package default
+\inputencoding utf8
+\fontencoding auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement class
+\float_alignment class
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_formatted_ref 0
+\use_minted 0
+\use_lineno 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tablestyle default
+\tracking_changes false
+\output_changes false
+\change_bars false
+\postpone_fragile_content true
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Active Cosserat rod 2D
+\end_layout
+
+\begin_layout Itemize
+Equations of motion
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{f}+\partial_{s}\boldsymbol{N} & =\boldsymbol{0},\\
+l+\partial_{s}\boldsymbol{r}\times\boldsymbol{N}+\partial_{s}\left(M+L_{\text{M}}\right) & =0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Forces and torques
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{f} & =-\boldsymbol{C}\boldsymbol{u},\\
+l & =-\gamma\omega,\\
+\bar{\boldsymbol{N}} & =\boldsymbol{S}\bar{\boldsymbol{\sigma}}+\tilde{\boldsymbol{S}}\partial_{t}\bar{\boldsymbol{\sigma}},\\
+M & =B\kappa+\tilde{B}\partial_{t}\kappa.\\
+L_{\text{M}} & =-B\kappa_{0}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Weak form linear balance
+\begin_inset Formula 
+\begin{align*}
+\int\boldsymbol{f}\cdot\boldsymbol{\phi}\,ds+\int\partial_{s}\boldsymbol{N}\cdot\boldsymbol{\phi} & =\boldsymbol{0},\\
+\int\boldsymbol{f}\cdot\boldsymbol{\phi}\,ds-\int\boldsymbol{N}\cdot\partial_{s}\boldsymbol{\phi} & =0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Weak form angular balance
+\begin_inset Formula 
+\begin{align*}
+\int l\cdot\phi\,ds+\int\left(\partial_{s}\boldsymbol{r}\times\boldsymbol{N}\right)\cdot\phi\,ds+\int\partial_{s}\left(M+L_{\text{M}}\right)\cdot\phi\,ds & =0,\\
+\int l\cdot\phi\,ds+\int\left(\partial_{s}\boldsymbol{r}\times\boldsymbol{N}\right)\cdot\phi\,ds-\int\left(M+L_{\text{M}}\right)\cdot\partial_{s}\phi\,ds & =0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define rotation matrix (we need to stick with one definition)
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{d}_{i} & =\boldsymbol{Q}\boldsymbol{e}_{i}\rightarrow\boldsymbol{Q}=\left[\boldsymbol{d}_{1},\,\boldsymbol{d}_{2}\right]
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\boldsymbol{Q}=\begin{bmatrix}\cos\theta & -\sin\theta\\
+\sin\theta & \cos\theta
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Derivatives 
+\begin_inset Formula 
+\begin{align*}
+\left(\partial_{s}\boldsymbol{Q}\right)\boldsymbol{Q}^{T} & =\partial_{s}\theta\boldsymbol{X}=\kappa\boldsymbol{X}\\
+\left(\partial_{t}\boldsymbol{Q}\right)\boldsymbol{Q}^{T} & =\partial_{t}\theta\boldsymbol{X}=\omega\boldsymbol{X}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\boldsymbol{X}=\begin{bmatrix}0 & -1\\
+1 & 0
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Vector representation
+\begin_inset Formula 
+\[
+\boldsymbol{v}=\bar{v}_{1}\boldsymbol{d}_{2}+\bar{v}_{2}\boldsymbol{d}_{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Therefore
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{Q}^{T}\boldsymbol{v} & =\overline{v}_{1}\boldsymbol{e}_{1}+\bar{v}_{2}\boldsymbol{e}_{2}=\bar{\boldsymbol{v}}
+\end{align*}
+
+\end_inset
+
+from 
+\begin_inset Formula $\boldsymbol{Q}\boldsymbol{Q}^{T}=\boldsymbol{1}$
+\end_inset
+
+ follows
+\begin_inset Formula 
+\[
+\bar{\boldsymbol{v}}=\boldsymbol{Q}^{T}\boldsymbol{v}\Leftrightarrow\boldsymbol{v}=\boldsymbol{Q}\bar{\boldsymbol{v}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Curvature (no twisting)
+\begin_inset Formula 
+\[
+\kappa=\partial_{s}\theta
+\]
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Derivation goes something like this:
+ The curvature defines how 
+\begin_inset Formula $\boldsymbol{d}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{d}_{2}$
+\end_inset
+
+ change with 
+\begin_inset Formula $s$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\partial_{s}\boldsymbol{d}_{i} & =\partial_{s}\boldsymbol{Q}\boldsymbol{e}_{i}=\left(\partial_{s}\boldsymbol{Q}\right)\boldsymbol{Q}^{T}\boldsymbol{d}_{i}=\partial_{s}\theta\boldsymbol{X}\boldsymbol{d}_{i}\\
+ & =\partial_{s}\theta\begin{bmatrix}0 & -1\\
+1 & 0
+\end{bmatrix}\boldsymbol{d}_{i}\\
+ & =\partial_{s}\theta\,\boldsymbol{d}_{i}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+We have 
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{d}_{2} & =\boldsymbol{X}\boldsymbol{d}_{1}\\
+-\boldsymbol{d}_{1} & =\boldsymbol{X}\boldsymbol{d}_{2}
+\end{align*}
+
+\end_inset
+
+which follows from 
+\begin_inset Formula $\boldsymbol{d}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{d}_{2}$
+\end_inset
+
+ are right-handed ortho-normal.
+ Hence,
+\begin_inset Formula 
+\begin{align*}
+\partial_{s}\boldsymbol{d}_{1} & =+\partial_{s}\theta\,\boldsymbol{d}_{2}\\
+\partial_{s}\boldsymbol{d}_{2} & =-\partial_{s}\theta\,\boldsymbol{d}_{1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Define 
+\begin_inset Formula $\kappa=\partial_{s}\theta$
+\end_inset
+
+ so that
+\begin_inset Formula 
+\[
+\partial_{s}\begin{pmatrix}\boldsymbol{d}_{1}\\
+\boldsymbol{d}_{2}
+\end{pmatrix}=\begin{bmatrix}0 & +\kappa\\
+-\kappa & 0
+\end{bmatrix}\begin{pmatrix}\boldsymbol{d}_{1}\\
+\boldsymbol{d}_{2}
+\end{pmatrix}
+\]
+
+\end_inset
+
+which is the Serret-Frennet equation for 2d curve.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Angular velocity 
+\begin_inset Formula 
+\[
+\omega=\partial_{t}\theta
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Strain vector
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\varepsilon} & =\partial_{s}\boldsymbol{r}-\boldsymbol{d}_{1}\Leftrightarrow\bar{\boldsymbol{\varepsilon}}=\boldsymbol{Q}^{T}\partial_{s}\boldsymbol{r}-\boldsymbol{e}_{1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Curvature rate 
+\begin_inset Formula 
+\[
+\partial_{t}\kappa=\partial_{s}\partial_{t}\theta
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Strain rate 
+\begin_inset Formula 
+\begin{align*}
+\partial_{t}\bar{\boldsymbol{\varepsilon}} & =\boldsymbol{Q}\partial_{st}\boldsymbol{r}-\omega\boldsymbol{X}\boldsymbol{Q}^{T}\partial_{s}\boldsymbol{r}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Derivation:
+\begin_inset Formula 
+\begin{align*}
+\partial_{t}\bar{\boldsymbol{\varepsilon}} & =\partial_{t}\left(\boldsymbol{Q}^{T}\partial_{s}\boldsymbol{r}-\boldsymbol{e}_{2}\right)\\
+ & =\boldsymbol{Q}^{T}\partial_{st}\boldsymbol{r}+\left(\partial_{t}\boldsymbol{Q}^{T}\right)\partial_{s}\boldsymbol{r}\\
+ & =\boldsymbol{Q}^{T}\partial_{st}\boldsymbol{r}-\boldsymbol{Q}^{T}\omega\boldsymbol{X}\boldsymbol{Q}\boldsymbol{Q}^{T}\partial_{s}\boldsymbol{r}\\
+ & =\boldsymbol{Q}^{T}\partial_{st}\boldsymbol{r}-\omega\boldsymbol{X}\boldsymbol{Q}^{T}\partial_{s}\boldsymbol{r}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+where we used that
+\begin_inset Formula 
+\begin{align*}
+\partial_{t}\left(\boldsymbol{Q}\boldsymbol{Q}^{T}\right) & =\left(\partial_{t}\boldsymbol{Q}\right)\boldsymbol{Q}^{T}+\boldsymbol{Q}\partial_{t}\boldsymbol{Q}^{T}\\
+0 & =\left(\partial_{t}\boldsymbol{Q}\right)\boldsymbol{Q}^{T}+\boldsymbol{Q}\partial_{t}\boldsymbol{Q}^{T}\\
+\boldsymbol{Q}\partial_{t}\boldsymbol{Q}^{T} & =-\left(\partial_{t}\boldsymbol{Q}\right)\boldsymbol{Q}^{T}\\
+\boldsymbol{Q}\partial_{t}\boldsymbol{Q}^{T} & =-\omega\boldsymbol{X}\\
+\partial_{t}\boldsymbol{Q}^{T} & =\boldsymbol{Q}^{T}\omega\boldsymbol{X}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+and that 
+\begin_inset Formula $\boldsymbol{X}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{Q}$
+\end_inset
+
+ commute
+\begin_inset Formula 
+\begin{align*}
+\begin{bmatrix}0 & -1\\
+1 & 0
+\end{bmatrix}\begin{bmatrix}\cos\theta & -\sin\theta\\
+\sin\theta & \cos\theta
+\end{bmatrix} & =\begin{bmatrix}-\sin\theta & -\cos\theta\\
+\cos\theta & -\sin\theta
+\end{bmatrix}\\
+\begin{bmatrix}\cos\theta & -\sin\theta\\
+\sin\theta & \cos\theta
+\end{bmatrix}\begin{bmatrix}0 & -1\\
+1 & 0
+\end{bmatrix} & =\begin{bmatrix}-\sin\theta & -\cos\theta\\
+\cos\theta & -\sin\theta
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Answer is yes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Cross product matrix in 2D
+\begin_inset Formula 
+\[
+\partial_{s}\boldsymbol{r}\times\boldsymbol{N}=\boldsymbol{X}\partial_{s}\boldsymbol{r}\cdot\boldsymbol{N}
+\]
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+We have 
+\begin_inset Formula 
+\[
+\begin{bmatrix}0 & -1\\
+1 & 0
+\end{bmatrix}\begin{pmatrix}\partial_{s}r_{1}\\
+\partial_{s}r_{2}
+\end{pmatrix}\cdot\begin{pmatrix}N_{1}\\
+N_{2}
+\end{pmatrix}=\begin{pmatrix}-\partial_{s}r_{2}\\
++\partial_{s}r_{1}
+\end{pmatrix}\cdot\begin{pmatrix}N_{1}\\
+N_{2}
+\end{pmatrix}=\partial_{s}r_{1}N_{2}-\partial_{s}r_{2}N_{1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Internal force resultant 
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{N} & =\boldsymbol{Q}\bar{\boldsymbol{N}}=\boldsymbol{Q}\left(\boldsymbol{S}\bar{\boldsymbol{\boldsymbol{\varepsilon}}}+\tilde{\boldsymbol{S}}\partial_{t}\bar{\boldsymbol{\boldsymbol{\varepsilon}}}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Internal torque resultant
+\begin_inset Formula 
+\[
+\boldsymbol{M}=\boldsymbol{Q}\bar{\boldsymbol{M}}=\boldsymbol{Q}\left(b\kappa+\tilde{b}\partial_{t}\kappa\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+2D from 3D
+\end_layout
+
+\begin_layout Itemize
+Assume planar locomotion 
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{r}(s,t) & =r_{1}(s,t)\boldsymbol{e}_{1}+r_{2}(s,t)\boldsymbol{e}_{2}\\
+\bar{\boldsymbol{\varepsilon}}(s,t) & =\bar{\varepsilon}{}_{1}(s,t)\boldsymbol{d}_{1}+\bar{\varepsilon}_{2}(s,t)\boldsymbol{d}_{2}\\
+\bar{\boldsymbol{\kappa}}(s,t) & =\bar{\kappa}(s,t)\boldsymbol{d}_{3}\\
+\bar{\boldsymbol{\omega}}(s,t) & =\omega\boldsymbol{d}_{3}
+\end{align*}
+
+\end_inset
+
+and 
+\begin_inset Formula $\boldsymbol{e}_{3}=\boldsymbol{d}_{3}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+Define
+\begin_inset Formula $\boldsymbol{d}_{1}$
+\end_inset
+
+ as normal,
+ 
+\begin_inset Formula $\boldsymbol{d}_{2}$
+\end_inset
+
+ dorsal-ventral,
+ and 
+\begin_inset Formula $\boldsymbol{d}_{3}$
+\end_inset
+
+ out of plane director with 
+\begin_inset Formula 
+\[
+\boldsymbol{d}_{1}=\cos\varphi\,\boldsymbol{e}_{1}+\sin\varphi\,\boldsymbol{e}_{2},\quad\boldsymbol{d}_{2}=-\sin\varphi\boldsymbol{e}_{1}+\cos\varphi\boldsymbol{e}_{2},\quad\boldsymbol{d}_{3}=\boldsymbol{e}_{3}
+\]
+
+\end_inset
+
+which follows from 
+\begin_inset Formula $d_{i}=\boldsymbol{Q}\boldsymbol{e}_{i}$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+\boldsymbol{Q}=\begin{bmatrix}\cos\varphi & -\sin\varphi & 0\\
+\sin\varphi & \cos\varphi & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Show that angular balance reduces to scalar 
+\begin_inset Formula 
+\[
+\boldsymbol{l}+\partial_{s}\boldsymbol{r}\times\boldsymbol{N}+\partial_{s}\boldsymbol{M}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Fluid drag torque line density 
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{l} & =-\left[\gamma_{\parallel}\boldsymbol{d}_{1}\otimes\boldsymbol{d}_{1}+\gamma_{\perp}\left(\boldsymbol{1}-\boldsymbol{d}_{1}\otimes\boldsymbol{d}_{1}\right)\right]\boldsymbol{\omega}\\
+ & =-\gamma_{\perp}\left[\boldsymbol{d}_{3}\otimes\boldsymbol{d}_{3}+\ldots\right]\omega\,\boldsymbol{d}_{3}\\
+ & =-\gamma_{\perp}\omega\boldsymbol{d}_{3}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Cross-product
+\begin_inset Formula 
+\begin{align*}
+\partial_{s}\boldsymbol{r}\times\boldsymbol{N} & =\left(\partial_{s}r_{1}\boldsymbol{e}_{1}+\partial_{s}r_{2}\boldsymbol{e}_{1}\right)\times\left(N_{1}\boldsymbol{e}_{1}+N_{2}\boldsymbol{e}_{2}\right)\\
+ & =\left(\partial_{s}r_{1}N_{2}-\partial_{s}r_{2}N_{1}\right)\boldsymbol{e}_{3}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Let's work out what 
+\begin_inset Formula $N_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $N_{2}$
+\end_inset
+
+ are 
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{N} & =\bar{N_{1}}\boldsymbol{d}_{1}+\bar{N_{2}}\boldsymbol{d}_{2}\\
+ & =\bar{N_{1}}\left(\cos\varphi\,\boldsymbol{e}_{1}+\sin\varphi\,\boldsymbol{e}_{2}\right)+\bar{N_{2}}\left(-\sin\varphi\boldsymbol{e}_{1}+\cos\varphi\boldsymbol{e}_{2}\right)\\
+ & =\left(\bar{N_{1}}\cos\varphi-\sin\varphi\bar{N_{2}}\right)\boldsymbol{e}_{1}+\left(\bar{N}_{1}\sin\varphi+\bar{N}_{2}\cos\varphi\right)\boldsymbol{e}_{2}\\
+N_{1} & =\bar{N_{1}}\cos\varphi-\sin\varphi\bar{N_{2}}\\
+N_{2} & =\bar{N_{2}}\cos\varphi+\sin\varphi\bar{N_{1}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Internal torque resultant 
+\begin_inset Formula $\boldsymbol{M}\propto\boldsymbol{\kappa}$
+\end_inset
+
+ from which follows 
+\begin_inset Formula $\boldsymbol{M}=M_{3}\boldsymbol{e}_{3}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Angular balance equation
+\begin_inset Formula 
+\[
+-\gamma\omega\boldsymbol{e}_{3}+\left(\partial_{s}r_{1}N_{2}-\partial_{s}r_{2}N_{1}\right)\boldsymbol{e}_{3}+M_{3}\boldsymbol{e}_{3}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Multiplying by 
+\begin_inset Formula $\boldsymbol{e}_{3}$
+\end_inset
+
+ yields 
+\begin_inset Formula 
+\begin{align*}
+-\gamma\omega+\left(\partial_{s}r_{1}N_{2}-\partial_{s}r_{2}N_{1}\right)+M_{3} & =0\\
+-\gamma\omega+\left[\partial_{s}r_{1}\left(\bar{N_{2}}\cos\varphi+\sin\varphi\bar{N_{1}}\right)-\partial_{s}r_{2}\left(\bar{N_{1}}\cos\varphi-\sin\varphi\bar{N_{2}}\right)\right]+B\kappa+\tilde{B}\partial_{t}\kappa & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
