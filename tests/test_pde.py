@@ -3,12 +3,12 @@ import unittest
 import warnings
 # From third-party
 import numpy as np
-from fenics import Expression, Function, project
+from fenics import project
 # From worm-rod-engine
 from worm_rod_engine.parameter.numerical_parameter import numerical_argument_parser
 from worm_rod_engine.worm import Worm
 from worm_rod_engine.util import v2f, f2n
-from worm_rod_engine.pde import finite_backwards_difference, finite_difference_coefficients
+from worm_rod_engine.pdes.util import finite_backwards_difference, finite_difference_coefficients
 
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
@@ -56,7 +56,7 @@ class TestPDE(unittest.TestCase):
 
             for i, t in enumerate(t_arr):
                 arr = np.cos(s_arr + t)
-                u_arr.append(v2f(arr, fs=worm.V))
+                u_arr.append(v2f(arr, fs=worm.PDE.V))
                 u_expected_arr[i, :] = arr
 
             for i in range(n_t_step):
@@ -72,7 +72,7 @@ class TestPDE(unittest.TestCase):
                     u_old_arr = u_arr[i-k:i]
                     u = u_arr[i]
                     u_t = finite_backwards_difference(n, k, u, u_old_arr, worm.dt)
-                    u_t_arr = f2n(project(u_t, worm.V))
+                    u_t_arr = f2n(project(u_t, worm.PDE.V))
 
                     c_arr, s_arr = finite_difference_coefficients(n, k)
 

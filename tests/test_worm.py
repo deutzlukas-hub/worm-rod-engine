@@ -9,7 +9,10 @@ from worm_rod_engine.parameter.numerical_parameter import numerical_argument_par
 from worm_rod_engine.parameter.output_parameter import output_parameter_parser
 from worm_rod_engine.worm import Worm
 from worm_rod_engine.util import v2f, f2n
-from worm_rod_engine.frame import Frame
+from worm_rod_engine.frame import Frame, FrameSequence
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning, message=".*product.*")
 
 class TestWorm(unittest.TestCase):
 
@@ -27,7 +30,7 @@ class TestWorm(unittest.TestCase):
 
             worm.initialise(F0=F0)
 
-            for u in worm.u_old_arr:
+            for u in worm.PDE.u_old_arr:
                 r0, theta0 = u.split(deepcopy=True)
                 r0_arr_out, theta0_arr_out = f2n(r0), f2n(theta0)
 
@@ -41,30 +44,87 @@ class TestWorm(unittest.TestCase):
 
     def test_zero_control(self):
 
-        numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
-        worm = Worm(numerical_param=numerical_param)
-        output = worm.solve(5, progress=True)
-        self.assertTrue(output[0])
-        FS = output[1]
-        err = np.linalg.norm(FS.r[0] - FS.r[-1], axis=0).sum()
-        self.assertAlmostEqual(0.0, err, places=2)
+        for dim in [2, 3]:
+            numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
+            worm = Worm(dimension=dim, numerical_param=numerical_param)
+            output = worm.solve(5, progress=True)
+            self.assertTrue(output[0])
+            FS = output[1]
+            err = np.linalg.norm(FS.r[0] - FS.r[-1], axis=0).sum()
+            self.assertAlmostEqual(0.0, err, places=2)
 
-    def test_constant_control_1(self):
 
-        numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
-        output_param = output_parameter_parser.parse_args(['--k', '--eps'])
-        worm = Worm(numerical_param=numerical_param, output_param=output_param)
+    def test_constant_curvature(self):
 
-        k_inp = np.pi
-        k0 = Constant((k_inp, 0.0, 0.0))
+        for dim in [2, 3]:
+            numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
+            output_param = output_parameter_parser.parse_args(['--k', '--eps'])
+            worm = Worm(dimension=dim, numerical_param=numerical_param, output_param=output_param)
+            k_inp = np.pi
+            if dim == 2:
+                k0 = Constant(k_inp)
+            else:
+                k0 = Constant((k_inp, 0.0, 0.0))
 
-        output = worm.solve(2, k0=k0, progress=True)
-        self.assertTrue(output[0])
-        FS = output[1]
+            output = worm.solve(2, k0=k0, progress=True)
+            self.assertTrue(output[0])
+            FS = output[1]
 
-        k_out_avg = FS.k[-1, 0].mean()
-        self.assertAlmostEqual(k_inp, k_out_avg, places=1)
+            k_out_avg = FS.k[-1, 0].mean()
+            self.assertAlmostEqual(k_inp, k_out_avg, places=1)
 
+    def test_solve_twice(self):
+
+        for dim in [2, 3]:
+            numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
+            worm = Worm(dimension=dim, numerical_param=numerical_param)
+            if dim == 2:
+                k0 = Expression('A*sin(q*x[0]-2*pi*t)', degree=1, A=2*np.pi, q=2*np.pi, t=0.0)
+            else:
+                k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2 * np.pi, q=2 * np.pi, t=0.0)
+
+            output1 = worm.solve(5, k0=k0, progress=True)
+            self.assertTrue(output1[0])
+            FS = output1[1]
+            r1 = FS.r
+            output2 = worm.solve(5, k0=k0, progress=True)
+            self.assertTrue(output2[0])
+            FS = output2[1]
+            r2 = FS.r
+            err = np.abs(r1 - r2).flatten().sum()
+            self.assertAlmostEqual(err, 0.0)
+
+    def test_update_against_solve(self):
+
+        for dim in [2, 3]:
+            numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
+            worm = Worm(dimension=dim, numerical_param=numerical_param)
+            if dim == 2:
+                k0 = Expression('A*sin(q*x[0]-2*pi*t)', degree=1, A=2*np.pi, q=2*np.pi, t=0.0)
+            else:
+                k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2 * np.pi, q=2 * np.pi, t=0.0)
+
+            output1 = worm.solve(5, k0=k0, progress=True)
+            self.assertTrue(output1[0])
+            FS = output1[1]
+            r1 = FS.r
+
+            worm.initialise(k0=k0)
+            frames = []
+
+            for t in FS.t:
+                worm.update_state(assemble=True)
+                frames.append(Frame(**worm.assembler.output))
+
+            FS = FrameSequence(frames)
+            r2 = FS.r
+            err = np.abs(r1 - r2).sum()
+            self.assertAlmostEqual(err, 0.0)
+
+        return
+
+    # def test_solve_update(self):
+    #     pass
     # def test_solve(self):
     #
     #     worm = Worm()
@@ -74,7 +134,7 @@ class TestWorm(unittest.TestCase):
     #
     #     k0 = Expression('A0*sin(q0*x[0]-2*pi*t)', degree=1, t=0.0, A0 = A0, q0=q0)
     #
-    #     output = worm.solve(5, k0, progress=True, debug=True)
+    #     output = worm.solve(5, k0, progress=True, minimal_working_examples=True)
     #     self.assertTrue(output[0], msg='Solve did not finsh')
     #
     # def test_solve_expr_input_versus_arr_input(self):

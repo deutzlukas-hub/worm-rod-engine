@@ -6,7 +6,7 @@ from fenics import Expression, Function, FunctionSpace, project, interpolate, do
 from ufl.tensors import ListTensor
 
 
-def f2n(var: Union[Function, List[Function], ListTensor]): #W: Optional[FunctionSpace] = None) -> np.ndarray:
+def f2n(var: Union[Function, List[Function], ListTensor]) -> np.ndarray:
     """
     Fenics to Numpy
     Returns a numpy array containing fenics function values
@@ -16,16 +16,11 @@ def f2n(var: Union[Function, List[Function], ListTensor]): #W: Optional[Function
     elif type(var) == ListTensor:
         return np.stack([f2n(project(v)) for v in var])
 
-    # if W is not None:
-    #     d2v_map = dof_to_vertex_map(W)
-    #     n_sub = W.dofmap().num_entity_dofs(0)
-
     fs = var.function_space()
     dof_maps = _dof_maps(fs)
     n_sub = fs.dofmap().num_entity_dofs(0)
 
-    if n_sub > 1:
-        d2v_map = dof_to_vertex_map(fs)
+    d2v_map = dof_to_vertex_map(fs)
 
     vec = var.vector().get_local()
     arr = np.zeros_like(dof_maps, dtype=np.float64)
@@ -38,6 +33,8 @@ def f2n(var: Union[Function, List[Function], ListTensor]): #W: Optional[Function
         if n_sub > 1:
             vmi = int(d2v_map[dmi]) // n_sub
             i = (i[0], vmi)
+        else:
+            i = d2v_map[dmi]
         arr[i] = vec[dmi]
     return arr
 
@@ -81,8 +78,7 @@ def _set_vals_from_numpy(var: Function, values: np.ndarray):
     fs = var.function_space()
     dof_maps = _dof_maps(fs)
     n_sub = fs.dofmap().num_entity_dofs(0)
-    if n_sub > 1:
-        d2v_map = dof_to_vertex_map(fs)
+    d2v_map = dof_to_vertex_map(fs)
 
     assert (
         values.shape == dof_maps.shape
@@ -100,7 +96,8 @@ def _set_vals_from_numpy(var: Function, values: np.ndarray):
         if n_sub > 1:
             vmi = int(d2v_map[dmi]) // n_sub
             i = (i[0], vmi)
-
+        else:
+            i = d2v_map[dmi]
         vec[dmi] = values[i]
 
 

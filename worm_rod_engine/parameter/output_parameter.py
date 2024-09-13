@@ -2,6 +2,8 @@ from argparse import ArgumentParser, BooleanOptionalAction
 from worm_rod_engine.parameter.util import OutputArgumentParser
 import numpy as np
 
+FUNCTION_KEYS = ['r', 'theta', 'd1', 'd2', 'd3', 'k', 'eps', 'r_t', 'w', 'eps_t', 'k_t', 'f', 'N', 'F_M', 'l', 'M', 'L_M']
+
 output_parameter_parser = OutputArgumentParser(description='output-parameter')
 
 output_parameter_parser.add_argument('--t', action=BooleanOptionalAction, default=True, out_type=float, help='If True, save time stamp')
@@ -12,8 +14,6 @@ output_parameter_parser.add_argument('--d2', action=BooleanOptionalAction, defau
 output_parameter_parser.add_argument('--d3', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save body-frame vectors')
 output_parameter_parser.add_argument('--k', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save curvature vector')
 output_parameter_parser.add_argument('--eps', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save state strain vector ')
-output_parameter_parser.add_argument('--k0', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save input curvature vector')
-output_parameter_parser.add_argument('--eps0', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save input strain vector')
 output_parameter_parser.add_argument('--r_t', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save centreline velocity ')
 output_parameter_parser.add_argument('--w', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save angular velocity')
 output_parameter_parser.add_argument('--eps_t', action=BooleanOptionalAction, default=False, out_type=np.ndarray, help='If True, save strain rate vector')

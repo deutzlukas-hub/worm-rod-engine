@@ -1,16 +1,17 @@
 # From built-in
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from types import SimpleNamespace
 import inspect
 # From third-party
 import numpy as np
 from fenics import Function, project, Expression, Constant
 # From worm-rod-engine
-from worm_rod_engine.pde import PDE
 from worm_rod_engine.util import f2n, v2f
+from worm_rod_engine.parameter.output_parameter import FUNCTION_KEYS
 
 if TYPE_CHECKING:
     from worm_rod_engine.worm import Worm
+
 
 class OutputAssembler():
 
@@ -20,21 +21,11 @@ class OutputAssembler():
         self.cache = {}
         self.output = {}
 
-    def clear_cache(self):
-        for key in list(self.cache):
-            if key not in ['k0', 'eps0']:
-                del self.cache[key]
-
-    def update_state(self,
-        r: Function,
-        theta: Function,
-        t: float):
+    def update_state(self, r: Function, theta: Function, t: float):
         """
         Assemble output variables
         """
-        self.cache['r'] = r
-        self.cache['theta'] = theta
-        self.cache['t'] = t
+        self.cache['r'], self.cache['theta'], self.cache['t'] = r, theta, t
 
 
     def assemble(self, output_param_name: str):
@@ -42,7 +33,7 @@ class OutputAssembler():
         if output_param_name in self.cache:
             return self.cache[output_param_name]
 
-        func = getattr(PDE, output_param_name)
+        func = getattr(self.worm.PDE, output_param_name)
 
         # Extract the parameter names
         signature = inspect.signature(func)
@@ -57,27 +48,42 @@ class OutputAssembler():
 
         return self.cache[output_param_name]
 
+    def assemble_input(self):
+        """
+        Assemble input variables
+        """
+        for input_name in ['eps0', 'k0']:
+            if hasattr(self, input_name):
+                v = getattr(self, input_name)
+                if isinstance(v, Function):
+                    v = f2n(v)
+                elif isinstance(v, Expression):
+                    v = f2n(v2f(v, fs=self.worm.PDE.function_spaces[input_name]))
+                elif isinstance(v, Constant):
+                    v = np.tile(v.values(), (1, self.worm.N))
+                if isinstance(v, np.ndarray):
+                    if self.worm.s_step is not None:
+                        v = v[..., ::self.worm.s_step]
+                self.output[input_name] = v
+
     def assemble_output(self):
         """
         Assemble output variables
         """
-        for param_name, save in vars(self.output_param).items():
+        for name, save in vars(self.output_param).items():
             if save:
-                v = self.assemble(param_name)
-
-                if isinstance(v, Function):
-                    v = f2n(v)
-                elif isinstance(v, float):
+                v = self.assemble(name)
+                if isinstance(v, float):
                     pass
-                elif isinstance(v, Expression):
-                    v = f2n(v2f(v, fs=self.worm.V3))
-                elif isinstance(v, Constant):
-                    v = np.tile(v.values(), (1, self.worm.N))
+                elif isinstance(v, Function):
+                    v = f2n(v)
                 else:
-                    v = f2n(project(v, self.worm.V3))
+                    fs = getattr(getattr(self.worm.PDE, name), 'function_space')
+                    v = f2n(project(v, getattr(self.worm.PDE, fs)))
 
                 if isinstance(v, np.ndarray):
                     if self.worm.s_step is not None:
                         v = v[..., ::self.worm.s_step]
-                self.output[param_name] = v
+
+                self.output[name] = v
 
