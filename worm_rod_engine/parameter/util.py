@@ -1,8 +1,19 @@
 # From built-in
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 from types import SimpleNamespace
 # From third-party
 import numpy as np
+
+def str2bool(v):
+    """
+    Handles boolean arguments
+    """
+    if v.lower() in ('yes', 'true', 't', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', '0'):
+        return False
+    else:
+        raise ArgumentTypeError('Boolean value expected.')
 
 def resistive_force_theory(physical_param: SimpleNamespace):
     '''

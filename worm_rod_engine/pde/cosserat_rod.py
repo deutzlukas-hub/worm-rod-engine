@@ -149,7 +149,7 @@ class PDE_Cosserat(ABC):
         pass
 
     @abstractmethod
-    def N(self):
+    def N_(self):
         pass
 
     @abstractmethod

@@ -139,7 +139,7 @@ class CosseratRod2D(PDE_Cosserat):
         # Curvature rate vector
         k_t = self.k_t(theta_t)
         # Internal force
-        N = self.N(eps, eps_t)
+        N = self.N_(eps, eps_t)
         # Internal force and muscle force
         if self.eps0 is None:
             N_and_F_M = N
@@ -215,18 +215,17 @@ class CosseratRod2D(PDE_Cosserat):
         Centreline velocity
         '''
         r_old_arr = [split(u)[0] for u in self.u_old_arr]
-        r_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, r, r_old_arr)
+        r_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, r, r_old_arr, self.worm.numerical_param.dt)
         return r_t
 
     @tag_function_space('V')
-    def w(self, theta):
+    def theta_t(self, theta):
         '''
         Angular velocity
         '''
         theta_old_arr = [split(u)[1] for u in self.u_old_arr]
-        w = finite_backwards_difference(1, self.worm.numerical_param.fdo, theta, theta_old_arr)
-
-        return w
+        theta_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, theta, theta_old_arr, self.worm.numerical_param.dt)
+        return theta_t
 
     #================================================================================================
     # Shape variables and rates
@@ -284,7 +283,7 @@ class CosseratRod2D(PDE_Cosserat):
         return -self.K_n * theta_t
 
     @tag_function_space('V2')
-    def N(self, eps, eps_t):
+    def N_(self, eps, eps_t):
         '''
         Internal force resultant
         '''
@@ -295,7 +294,12 @@ class CosseratRod2D(PDE_Cosserat):
         """
         Muscle force
         """
-        return - self.S * self.eps0
+        if self.eps0 is None:
+            F_M = Function(self.V2)
+            F_M.assign(Constant((0.0, 0.0)))
+        else:
+            F_M = project(- self.S * self.eps0, self.V2)
+        return F_M
 
     @tag_function_space('V2')
     def N_and_F_M(self, eps, eps_t):
@@ -316,7 +320,12 @@ class CosseratRod2D(PDE_Cosserat):
         """
         Muscle force
         """
-        return - self.B * self.k0
+        if self.k0 is None:
+            L_M = Function(self.V)
+            L_M.assign(Constant(0.0))
+        else:
+            L_M = project(- self.B * self.k0, self.V)
+        return L_M
 
     @tag_function_space('V')
     def M_and_L_M(self, k, k_t):
@@ -336,13 +345,13 @@ class CosseratRod2D(PDE_Cosserat):
         return 0.5 * assemble( (dot(k, self.B * k) + dot(eps, self.S * eps)) * dx)
 
     @staticmethod
-    def D_E_dot(f, l, r_t, w):
+    def DE_dot(f, l, r_t, theta_t):
         '''
         Calculate fluid dissipation rate
         '''
-        return assemble( ( dot(f, r_t) + dot(l, w) ) * dx)
+        return assemble( ( dot(f, r_t) + dot(l, theta_t) ) * dx)
 
-    def D_I_dot(self, eps_t, k_t):
+    def DI_dot(self, eps_t, k_t):
         '''
         Calculate internal dissipation rate
         '''
@@ -355,9 +364,9 @@ class CosseratRod2D(PDE_Cosserat):
         return assemble((dot(k, self.B * k_t) + dot(eps, self.S * eps_t)) * dx)
 
     @staticmethod
-    def W_dot(Q, F_M, L_M, r_t, w):
+    def W_dot(Q, F_M, L_M, r_t, theta_t):
         '''
         Calculate mechanical muscle power
         '''
-        return assemble( ( dot(grad(F_M), Q.T * r_t) + dot(grad(L_M), w) * dx) )
+        return assemble( (dot(grad(F_M), Q.T * r_t) + dot(grad(L_M), theta_t)) * dx)
 

@@ -12,6 +12,7 @@ import warnings
 # From third-party
 import numpy as np
 from fenics import *
+from dolfin.cpp.function import Constant as cppConstant
 from tqdm import tqdm
 # From worm_rod_engine
 from worm_rod_engine.util import v2f, count_decimal_places
@@ -109,12 +110,20 @@ class Worm:
             v2f(eps0, self.PDE.eps0)
         elif isinstance(self.PDE.eps0, Expression):
             if hasattr(self.PDE.eps0, 't'):
-                self.PDE.eps0.t = self.t
+                if isinstance(self.PDE.eps0.t, float):
+                    self.PDE.eps0.t = self.t
+                if isinstance(self.PDE.eps0.t, cppConstant):
+                    self.PDE.eps0.t.assign(self.t)
         if k0 is not None:
             v2f(k0, self.PDE.k0)
         if isinstance(self.PDE.k0, Expression):
             if hasattr(self.PDE.k0, 't'):
-                self.PDE.k0.t = self.t
+                if isinstance(self.PDE.k0.t, float):
+                    self.PDE.k0.t = self.t
+                if isinstance(self.PDE.k0.t, cppConstant):
+                    self.PDE.k0.t.assign(self.t)
+
+
 
     def _picard_iteration(self):
 
@@ -193,9 +202,10 @@ class Worm:
         k0: Optional[Union[Constant, Expression]] = None,
         F0: Optional[Frame] = None,
         assemble_input: bool = True,
-        progress: bool = False,
+        progress: bool = True,
         log: bool = False,
-        debug: bool = False):
+        debug: bool = False,
+        pbar: Optional[tqdm] = None):
         """
         Run the forward model for 'T_sim' dimensionless time units.
         """
@@ -208,7 +218,10 @@ class Worm:
         if not log:
             self.logger.setLevel(logging.CRITICAL)
         if progress:
-            pbar = tqdm(total = self.n_t_step)
+            if pbar is None:
+                pbar = tqdm(total = self.n_t_step)
+            else:
+                pbar.total = self.n_t_step
 
         # Frames
         frames = []
@@ -236,13 +249,14 @@ class Worm:
 
         except Exception as e:
             if debug: raise e
+            runtime = time() - start_time
             # If simulation fails, return simulation outputs til now and exception upstream
             self.logger.error(f'Solver failed at time step {i} out of n_steps={self.n_t_step}, abort simulation')
-            return False, FrameSequence(frames), e
+            return {'exit_status': False, 'FS': FrameSequence(frames), 'runtime': runtime}, e
 
-        sim_time = time() - start_time
+        runtime = time() - start_time
+        return {'exit_status': True, 'FS': FrameSequence(frames), 'runtime': runtime}, None
 
-        return True, FrameSequence(frames), sim_time
 
     def update_state(self,
         eps0: Optional[np.ndarray] = None,

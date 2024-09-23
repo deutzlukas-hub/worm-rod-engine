@@ -1,6 +1,7 @@
-from argparse import ArgumentParser, BooleanOptionalAction
+from argparse import ArgumentParser
+from worm_rod_engine.parameter.util import str2bool
 
-numerical_argument_parser = ArgumentParser(description='solver-parameter')
+numerical_argument_parser = ArgumentParser(description='solver-parameter', allow_abbrev=False)
 
 # Discretization
 numerical_argument_parser.add_argument('--N', type=int, default=750, help ='Number of mesh points')
@@ -11,7 +12,7 @@ numerical_argument_parser.add_argument('--fdo', type=int, default=2, help='Order
 numerical_argument_parser.add_argument('--fet', type=str, default='Lagrange', help="Type of finite element.")
 numerical_argument_parser.add_argument('--fed', type=int, default=1, help="Degree of the finite element.")
 # Pircard iteration
-numerical_argument_parser.add_argument('--pic_on', action=BooleanOptionalAction, default=False, help='If true, solve nonlinear pde with picard iteration')
+numerical_argument_parser.add_argument('--pic_on', type=str2bool, default=False, help='If true, solve nonlinear pde with picard iteration')
 numerical_argument_parser.add_argument('--pic_max_iter', type=int, default=100, help='Maximum number of iteration steps')
 numerical_argument_parser.add_argument('--pic_lr', type=float, default=0.5, help='Learning rate')
 numerical_argument_parser.add_argument('--pic_tol', type=float, default=1e-2, help='Error tolerance')

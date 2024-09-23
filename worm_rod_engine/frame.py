@@ -8,7 +8,7 @@ import h5py
 class Frame():
     def __init__(self, **kwargs):
 
-        self.frame_keys = kwargs.keys()
+        self.frame_keys = list(kwargs.keys())
 
         for key, value in kwargs.items():
             setattr(self, key, value)

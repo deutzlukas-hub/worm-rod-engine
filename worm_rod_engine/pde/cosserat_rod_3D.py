@@ -139,7 +139,7 @@ class CosseratRod3D(PDE_Cosserat):
         # Curvature rate vector
         k_t = self.k_t(A_h, A_h_t, theta_h, theta_t)
         # Internal force
-        N = self.N(Q_h, eps, eps_t)
+        N = self.N_(Q_h, eps, eps_t)
 
         # Internal force and muscle force
         if self.eps0 is None:
@@ -350,7 +350,7 @@ class CosseratRod3D(PDE_Cosserat):
         return -Q.T * self.K_n * (e3e3 + self.K_y * (Identity(3) - e3e3)) * w
 
     @tag_function_space('V3')
-    def N(self, Q, eps, eps_t):
+    def N_(self, Q, eps, eps_t):
         '''
         Internal force resultant
         '''
@@ -403,13 +403,13 @@ class CosseratRod3D(PDE_Cosserat):
         return 0.5 * assemble( (dot(k, self.B * k) + dot(eps, self.S * eps)) * dx)
 
     @staticmethod
-    def D_E_dot(f, l, r_t, w):
+    def DE_dot(f, l, r_t, w):
         '''
         Calculate fluid dissipation rate
         '''
         return assemble( ( dot(f, r_t) + dot(l, w) ) * dx)
 
-    def D_I_dot(self, eps_t, k_t):
+    def DI_dot(self, eps_t, k_t):
         '''
         Calculate internal dissipation rate
         '''

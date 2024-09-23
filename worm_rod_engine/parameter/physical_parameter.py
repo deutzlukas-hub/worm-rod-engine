@@ -1,9 +1,9 @@
 # From build-in
-from argparse import ArgumentParser, BooleanOptionalAction
+from argparse import ArgumentParser
 # From third-party
 import pint
 # from worm-rod-engine
-from worm_rod_engine.parameter.util import resistive_force_theory
+from worm_rod_engine.parameter.util import str2bool, resistive_force_theory
 
 ureg = pint.UnitRegistry()
 
@@ -25,7 +25,7 @@ phyisical_parameter_parser.add_argument('--nu', type=lambda s: float(s) * ureg.d
 phyisical_parameter_parser.add_argument('--T', type=lambda s: float(s) * ureg.second,
                                         default=1.0 * ureg.second, help='Characteristic time scale')
 # Environment parameter
-phyisical_parameter_parser.add_argument('--NIC', action=BooleanOptionalAction, default=True,
+phyisical_parameter_parser.add_argument('--NIC', type=str2bool, default=True,
                                         help='Specify if the fluid is Newtonian incompressible')
 phyisical_parameter_parser.add_argument('--mu', type=lambda s: float(s) * ureg.pascal * ureg.second,
                                         default=1e-3 * ureg.pascal * ureg.second, help='Fluid viscosity')

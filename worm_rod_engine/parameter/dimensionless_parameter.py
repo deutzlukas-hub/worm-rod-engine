@@ -15,7 +15,7 @@ K_c = default_dimensionless_parameter.K_c
 K_y = default_dimensionless_parameter.K_y
 K_n = default_dimensionless_parameter.K_n
 
-dimensionless_parameter_parser = ArgumentParser(description='dimensionless-parameter')
+dimensionless_parameter_parser = ArgumentParser(description='dimensionless-parameter', allow_abbrev=False)
 
 dimensionless_parameter_parser.add_argument('--e', type=float, default=e, help='Slenderness parameter')
 dimensionless_parameter_parser.add_argument('--alpha', type=float, default=alpha, help='Relative external damping vs elastic response time')

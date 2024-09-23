@@ -11,7 +11,7 @@ from worm_rod_engine.visualize.plot import plot_scalar_field
 def simulate_planar_undulation():
 
     # Specify outputs of interest
-    output_param = output_parameter_parser.parse_args(['--k'])
+    output_param = output_parameter_parser.parse_args(['--k', str(True)])
     numerical_param = numerical_argument_parser.parse_args(['--dt', '1e-2', '--N', '250'])
     worm = Worm(numerical_param=numerical_param, output_param=output_param)
 
@@ -23,8 +23,8 @@ def simulate_planar_undulation():
     k0 = Expression(('A0*sin(q0*x[0]+2*pi*t)', '0', '0'), degree=1, t=0.0, A0=A0, q0=q0)
     # Run simulation
     output = worm.solve(5, k0=k0, progress=True)
-    assert output[0], 'Simulation failed'
-    FS = output[1]
+    assert output['exit_status'], 'Simulation failed'
+    FS = output['FS']
 
     # Post-process outputs
     r_com = FS.r.mean(axis = 2) # centroid
