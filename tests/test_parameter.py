@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 # From worm-rod-engine
 from worm_rod_engine.parameter.dimensionless_parameter import default_dimensionless_parameter
+from worm_rod_engine.parameter.util import convert_to_dimensionless
 
 
 class TestParameter(unittest.TestCase):

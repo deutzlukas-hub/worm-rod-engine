@@ -52,10 +52,6 @@ def convert_to_dimensionless(physical_param: SimpleNamespace):
     dimless_param.K_y = y_n / y_t
     dimless_param.K_n= y_t / (c_t * pp.L0**2)
 
-    for key, p in vars(dimless_param).items():
-        assert p.check(['dimensionless']), f'{key} not dimensionless'
-        setattr(dimless_param, key, p.magnitude)
-
     return dimless_param
 
 class OutputArgumentParser(ArgumentParser):
