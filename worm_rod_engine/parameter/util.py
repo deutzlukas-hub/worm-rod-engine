@@ -35,18 +35,22 @@ def convert_to_dimensionless(physical_param: SimpleNamespace):
     Converts physical to dimensionless parameters
     """
     pp = physical_param
+    if pp.NIC:
+        c_t, c_n, y_t, y_n = resistive_force_theory(physical_param)
+    else:
+        c_t, c_n, y_t, y_n = pp.c_t, pp.c_n, pp.y_t, pp.y_n
 
     I = 0.25 * np.pi*pp.R**4 # Second moment of area
     b = I*pp.E # Bending rigidity
 
     dimless_param = SimpleNamespace() # dimensional parameter
     dimless_param.e = pp.R / pp.L0
-    dimless_param.alpha = pp.c_t * pp.L0**4 / (b * pp.T)
+    dimless_param.alpha = c_t * pp.L0**4 / (b * pp.T)
     dimless_param.beta = pp.xi / pp.T
     dimless_param.rho = 0.5 / (1 + pp.nu)
-    dimless_param.K_c = pp.c_n / pp.c_t
-    dimless_param.K_y = pp.y_n / pp.y_t
-    dimless_param.K_n= pp.y_t / (pp.c_t * pp.L0**2)
+    dimless_param.K_c = c_n / c_t
+    dimless_param.K_y = y_n / y_t
+    dimless_param.K_n= y_t / (c_t * pp.L0**2)
 
     for key, p in vars(dimless_param).items():
         assert p.check(['dimensionless']), f'{key} not dimensionless'
