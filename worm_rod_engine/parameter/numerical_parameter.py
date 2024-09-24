@@ -17,4 +17,4 @@ numerical_argument_parser.add_argument('--pic_max_iter', type=int, default=100, 
 numerical_argument_parser.add_argument('--pic_lr', type=float, default=0.5, help='Learning rate')
 numerical_argument_parser.add_argument('--pic_tol', type=float, default=1e-2, help='Error tolerance')
 
-default_numerical_parameter = numerical_argument_parser.parse_args()
+default_numerical_parameter = numerical_argument_parser.parse_args([])

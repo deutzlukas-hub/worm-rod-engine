@@ -31,7 +31,7 @@ output_parameter_parser.add_argument('--DE_dot', type=str2bool, default=False, o
 output_parameter_parser.add_argument('--V_dot', type=str2bool, default=False, out_type=float, help='If True, save muscle torque')
 output_parameter_parser.add_argument('--W_dot', type=str2bool, default=False, out_type=float, help='If True, save muscle torque')
 
-default_output_parameter = output_parameter_parser.parse_args()
+default_output_parameter = output_parameter_parser.parse_args([])
 output_parameter_types = output_parameter_parser.output_param_types
 
 

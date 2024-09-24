@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 from worm_rod_engine.parameter.physical_parameter import default_physical_parameter
 from worm_rod_engine.parameter.util import convert_to_dimensionless
 
-
 # Default physical parameter
 default_dimensionless_parameter = convert_to_dimensionless(default_physical_parameter)
 e = default_dimensionless_parameter.e

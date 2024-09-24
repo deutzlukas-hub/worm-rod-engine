@@ -30,7 +30,7 @@ phyisical_parameter_parser.add_argument('--NIC', type=str2bool, default=True,
 phyisical_parameter_parser.add_argument('--mu', type=lambda s: float(s) * ureg.pascal * ureg.second,
                                         default=1e-3 * ureg.pascal * ureg.second, help='Fluid viscosity')
 
-phyisical_parameter = phyisical_parameter_parser.parse_args()
+phyisical_parameter = phyisical_parameter_parser.parse_args([])
 c_t, c_n, y_t, y_n = resistive_force_theory(phyisical_parameter)
 
 phyisical_parameter_parser.add_argument('--c_t', type=lambda s: float(s) * ureg.pascal * ureg.second,
@@ -42,7 +42,7 @@ phyisical_parameter_parser.add_argument('--y_t', type=lambda s: float(s) * ureg.
 phyisical_parameter_parser.add_argument('--y_n', type=lambda s: float(s) * ureg.pascal * ureg.second,
                                         default=y_n, help='Normal/lateral angular drag coefficient')
 
-default_physical_parameter = phyisical_parameter_parser.parse_args()
+default_physical_parameter = phyisical_parameter_parser.parse_args([])
 
 
 
