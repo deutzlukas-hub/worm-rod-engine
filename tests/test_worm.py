@@ -47,7 +47,7 @@ class TestWorm(unittest.TestCase):
         for dim in [2, 3]:
             numerical_param = numerical_argument_parser.parse_args(['--dt', '0.01', '--N', '250'])
             worm = Worm(dimension=dim, numerical_param=numerical_param)
-            output = worm.solve(5, progress=True)
+            output, _ = worm.solve(5, progress=True)
             self.assertTrue(output['exit_status'])
             FS = output['FS']
             err = np.linalg.norm(FS.r[0] - FS.r[-1], axis=0).sum()
@@ -66,7 +66,7 @@ class TestWorm(unittest.TestCase):
             else:
                 k0 = Constant((k_inp, 0.0, 0.0))
 
-            output = worm.solve(2, k0=k0, progress=True)
+            output, _ = worm.solve(2, k0=k0, progress=True)
             self.assertTrue(output['exit_status'])
             FS = output['FS']
 
@@ -83,11 +83,11 @@ class TestWorm(unittest.TestCase):
             else:
                 k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2 * np.pi, q=2 * np.pi, t=0.0)
 
-            output1 = worm.solve(5, k0=k0, progress=True)
+            output1, _ = worm.solve(5, k0=k0, progress=True)
             self.assertTrue(output1['exit_status'])
             FS = output1['FS']
             r1 = FS.r
-            output2 = worm.solve(5, k0=k0, progress=True)
+            output2, _ = worm.solve(5, k0=k0, progress=True)
             self.assertTrue(output2['exit_status'])
             FS = output2['FS']
             r2 = FS.r
@@ -104,7 +104,7 @@ class TestWorm(unittest.TestCase):
             else:
                 k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2 * np.pi, q=2 * np.pi, t=0.0)
 
-            output1 = worm.solve(5, k0=k0, progress=True)
+            output1, _ = worm.solve(5, k0=k0, progress=True)
             self.assertTrue(output1['exit_status'])
             FS = output1['FS']
             r1 = FS.r
