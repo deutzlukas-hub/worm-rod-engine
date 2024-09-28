@@ -82,7 +82,7 @@ class PDE_Cosserat(ABC):
 
         if isinstance(k0, (Constant, Expression)) or k0 is None:
             self.k0 = k0
-        elif isinstance(eps0, np.ndarray) or eps0 == np.ndarray:
+        elif isinstance(k0, np.ndarray) or k0 == np.ndarray:
             self.k0 = Function(self.function_spaces['k0'])
 
         if asseble_input:
