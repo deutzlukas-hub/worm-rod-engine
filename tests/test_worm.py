@@ -102,7 +102,7 @@ class TestWorm(unittest.TestCase):
             if dim == 2:
                 k0 = Expression('A*sin(q*x[0]-2*pi*t)', degree=1, A=2*np.pi, q=2*np.pi, t=0.0)
             else:
-                k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2 * np.pi, q=2 * np.pi, t=0.0)
+                k0 = Expression(('A*sin(q*x[0]-2*pi*t)', '0', '0'), degree=1, A=2*np.pi, q=2*np.pi, t=0.0)
 
             output1, _ = worm.solve(5, k0=k0, progress=True)
             self.assertTrue(output1['exit_status'])

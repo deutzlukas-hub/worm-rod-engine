@@ -38,7 +38,7 @@ INPUT_KEYS = ['eps0', 'k0']
 class Worm:
 
     def __init__(self,
-        dimension=3,
+        dimension: int = 3,
         numerical_param: SimpleNamespace = default_numerical_parameter,
         dimensionless_param: SimpleNamespace = default_dimensionless_parameter,
         output_param: SimpleNamespace = default_output_parameter,
@@ -270,13 +270,16 @@ class Worm:
         # Update initial guess of head functions with solution from last time step
         self.PDE.u_h.assign(self.PDE.u_old_arr[-1])
 
+            # if self.numerical_param.external_force_torque:
+            #     self.update_f_and_l(self.PDE.u_old_arr[-1])
+
         if self.numerical_param.pic_on:
             u = self._picard_iteration()
         else:
             u = Function(self.PDE.W)
             solve(self.PDE.F_op == self.PDE.L, u, solver_parameters = self.fenics_solver_param)
 
-        assert not np.isnan(u.vector().get_local()).any(), f'Solution at t={self._t:.{self.dt_dp}f} contains nans!'
+        assert not np.isnan(u.vector().get_local()).any(), f'Solution at t={self.t:.{self.dt_dp}f} contains nans!'
 
         # Frame and outputs need to be assembled before u_old_arr is updated for derivatives to use correct data points
         if assemble:

@@ -86,7 +86,7 @@ class PDE_Cosserat(ABC):
             self.k0 = Function(self.function_spaces['k0'])
 
         if asseble_input:
-            self.worm.assembler.eps0, self.worm.assembler.k0 = self.eps0, self.k0
+             self.worm.assembler.eps0, self.worm.assembler.k0 = self.eps0, self.k0
 
     def _assign_initial_values(self, F0: Optional[Frame] = None):
         '''

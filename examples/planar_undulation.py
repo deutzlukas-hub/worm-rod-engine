@@ -55,20 +55,20 @@ def simulate_planar_undulation():
 def simulate_planar_undulation_2D():
 
     # Specify outputs of interest
-    output_param = output_parameter_parser.parse_args(['--k'])
+    output_param = output_parameter_parser.parse_args(['--k', 'True'])
     numerical_param = numerical_argument_parser.parse_args(['--dt', '1e-2', '--N', '250'])
     worm = Worm(dimension=2, numerical_param=numerical_param, output_param=output_param)
 
     # Simulation time
     T_sim = 1.0
     # Define inputs
-    A0, lam0 = 2* np.pi, 1.0
+    A0, lam0 = 2 * np.pi, 1.0
     q0 = 2 * np.pi / lam0
     k0 = Expression('A0*sin(q0*x[0]+2*pi*t)', degree=1, t=0.0, A0=A0, q0=q0)
     # Run simulation
-    output = worm.solve(5, k0=k0, progress=True)
-    assert output[0], 'Simulation failed'
-    FS = output[1]
+    output = worm.solve(5, k0=k0, progress=True, debug=True)[0]
+    assert output['exit_status'], 'Simulation failed'
+    FS = output['FS']
 
     # Post-process outputs
     r_com = FS.r.mean(axis = 2) # centroid

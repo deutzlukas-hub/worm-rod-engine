@@ -17,6 +17,7 @@ output_parameter_parser.add_argument('--d3', type=str2bool, default=False, out_t
 output_parameter_parser.add_argument('--k', type=str2bool, default=False, out_type=np.ndarray, help='If True, save curvature vector')
 output_parameter_parser.add_argument('--eps', type=str2bool, default=False, out_type=np.ndarray, help='If True, save state strain vector ')
 output_parameter_parser.add_argument('--r_t', type=str2bool, default=False, out_type=np.ndarray, help='If True, save centreline velocity ')
+output_parameter_parser.add_argument('--theta_t', type=str2bool, default=False, out_type=np.ndarray, help='If True, save centreline velocity ')
 output_parameter_parser.add_argument('--w', type=str2bool, default=False, out_type=np.ndarray, help='If True, save angular velocity')
 output_parameter_parser.add_argument('--eps_t', type=str2bool, default=False, out_type=np.ndarray, help='If True, save strain rate vector')
 output_parameter_parser.add_argument('--k_t', type=str2bool, default=False, out_type=np.ndarray, help='If True, save curvature rate vector')

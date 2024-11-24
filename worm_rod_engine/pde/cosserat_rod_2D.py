@@ -156,6 +156,16 @@ class CosseratRod2D(PDE_Cosserat):
         l = self.l(theta_t)
         # External fluid drag force
         f = self.f(Q_h, r_t)
+
+        # if self.numerical_param.external_force:
+        #     # External fluid drag torque
+        #     l = self.l(theta_t)
+        #     # External fluid drag force
+        #     f = self.f(Q_h, r_t)
+        # else:
+        # l = Function(self.V)
+        # f = Function(self.V2)
+
         # linear balance
         eq1 = dot(f, phi_r) * dx - dot(Q_h * N_and_F_M, grad(phi_r)) * dx
         # Angular balance
