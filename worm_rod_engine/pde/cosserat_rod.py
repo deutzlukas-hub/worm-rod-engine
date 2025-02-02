@@ -1,6 +1,6 @@
 # From built-in
 from abc import ABC, abstractmethod
-from typing import Union, Optional, TYPE_CHECKING
+from typing import Union, Optional, TYPE_CHECKING, List
 # From third-party
 import numpy as np
 from fenics import *
@@ -88,7 +88,9 @@ class PDE_Cosserat(ABC):
         if asseble_input:
              self.worm.assembler.eps0, self.worm.assembler.k0 = self.eps0, self.k0
 
-    def _assign_initial_values(self, F0: Optional[Frame] = None):
+    def _assign_initial_values(self,
+                               F0: Optional[Frame] = None,
+                               F_past_arr: Optional[List[Frame]] = None):
         '''
         Initialise initial state and state history
         '''
@@ -109,9 +111,14 @@ class PDE_Cosserat(ABC):
         # Assign (r, theta) tuple in [V2, V] to u in W
         fa = FunctionAssigner(self.W, [self.function_spaces['r'], self.function_spaces['theta']])
 
-        for u_old_n in self.u_old_arr:
-            fa.assign(u_old_n, [r0, theta0])
-
+        if F_past_arr is None:
+            for u_old_n in self.u_old_arr:
+                fa.assign(u_old_n, [r0, theta0])
+        else:
+            assert(len(F_past_arr) == len(self.u_old_arr)), \
+                f'Number of past frames must be {len(self.u_old_arr)} to compute finite difference approximation of time derivatives'
+            for u_old_n, F in zip(self.u_old_arr, F_past_arr):
+                fa.assign(u_old_n, [F.r, F_past_arr.theta])
         return
 
     @staticmethod

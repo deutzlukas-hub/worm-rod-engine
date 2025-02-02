@@ -4,6 +4,8 @@ from typing import Optional, List
 # From third-party
 import numpy as np
 import h5py
+from notebook.extensions import RED_X
+
 
 class Frame():
     def __init__(self, **kwargs):
@@ -12,6 +14,52 @@ class Frame():
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def body_frame_euler_angles(self):
+
+        """Returns an array of shape (3, 3, N) with rotation matrices for each set of angles."""
+
+        Q_arr = np.zeros((3, 3, self.theta.shape[-1]))
+
+        for i in range(self.theta.shape[-1]):
+            # Extract angles for this iteration
+            a, b, g = self.theta[0, i], self.theta[1, i], self.theta[2, i]
+
+            # Compute individual rotation matrices
+            R_x = np.array([
+                [1, 0, 0],
+                [0, np.cos(g), -np.sin(g)],
+                [0, np.sin(g), np.cos(g)]
+            ])
+
+            R_y = np.array([
+                [np.cos(b), 0, np.sin(b)],
+                [0, 1, 0],
+                [-np.sin(b), 0, np.cos(b)]
+            ])
+
+            R_z = np.array([
+                [np.cos(a), -np.sin(a), 0],
+                [np.sin(a), np.cos(a), 0],
+                [0, 0, 1]
+            ])
+
+            Q_arr[:, :, i] = R_z @ R_y @ R_x
+
+
+        self.d1 = Q_arr[0, ...]
+        self.d2 = Q_arr[1, ...]
+        self.d3 = Q_arr[2, ...]
+
+    def euler_angles_from_body_frame(self):
+
+        Q = np.stack([self.d1, self.d2, self.d3], axis=1)
+
+        alpha = np.arctan2(Q[1, 0, :], Q[0, 0 , :])
+        beta = np.arcsin(-Q[2, 1, :])
+        gama = np.arctan2(Q[2, 1, :], Q[2, 2, :])
+
+        self.theta = np.row_stack([alpha, beta, gama])
 
 class FrameSequence():
 

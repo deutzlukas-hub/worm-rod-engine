@@ -4,7 +4,7 @@ Created on 12 May 2022
 @author: lukas
 """
 #Built-in imports
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 from types import SimpleNamespace
 import logging
 from time import time
@@ -187,6 +187,7 @@ class Worm:
         eps0: Optional[Union[Constant, Expression, np.ndarray]] = None,
         k0: Optional[Union[Constant, Expression, np.ndarray]] = None,
         F0: Optional[Frame] = None,
+        F_past: Optional[List[Frame]] = None,
         assemble_input: bool = True):
         """
         Initialise worm object for given model parameters, control sequence (optional) and initial frame (optional).
@@ -194,7 +195,7 @@ class Worm:
         self.t = 0.0 if F0 is None else F0.t
         self.PDE._init_input(eps0, k0, assemble_input)
         self.PDE._init_form()
-        self.PDE._assign_initial_values(F0)
+        self.PDE._assign_initial_values(F0, F_past)
 
     def solve(self,
         T_sim: float,
