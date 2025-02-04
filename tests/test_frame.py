@@ -127,6 +127,8 @@ class TestFrame(unittest.TestCase):
             self.assertTrue(np.allclose(F.d3 - d3_pred[:, None], np.zeros_like(F.d3)))
 
 
+    def test_euler_angle_from_body_frame(self):
+        pass
 
 
 

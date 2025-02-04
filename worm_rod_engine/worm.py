@@ -184,18 +184,17 @@ class Worm:
 #================================================================================================
 
     def initialise(self,
-        eps0: Optional[Union[Constant, Expression, np.ndarray]] = None,
-        k0: Optional[Union[Constant, Expression, np.ndarray]] = None,
-        F0: Optional[Frame] = None,
-        F_past: Optional[List[Frame]] = None,
-        assemble_input: bool = True):
+                   eps0: Optional[Union[Constant, Expression, np.ndarray]] = None,
+                   k0: Optional[Union[Constant, Expression, np.ndarray]] = None,
+                   F0: Optional[Union[Frame, FrameSequence]] = None,
+                   assemble_input: bool = True):
         """
         Initialise worm object for given model parameters, control sequence (optional) and initial frame (optional).
         """
         self.t = 0.0 if F0 is None else F0.t
         self.PDE._init_input(eps0, k0, assemble_input)
         self.PDE._init_form()
-        self.PDE._assign_initial_values(F0, F_past)
+        self.PDE._assign_initial_values(F0)
 
     def solve(self,
         T_sim: float,
