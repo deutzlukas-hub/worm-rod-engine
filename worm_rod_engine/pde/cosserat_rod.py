@@ -3,11 +3,10 @@ from abc import ABC, abstractmethod
 from typing import Union, Optional, TYPE_CHECKING, List
 # From third-party
 import numpy as np
-from build.lib.worm_rod_engine.frame import FrameSequence
 from fenics import *
 # From worm-rod-engine
 from worm_rod_engine.util import v2f
-from worm_rod_engine.frame import Frame
+from worm_rod_engine.frame import Frame, FrameSequence
 from worm_rod_engine.pde.util import finite_backwards_difference
 
 if TYPE_CHECKING:
