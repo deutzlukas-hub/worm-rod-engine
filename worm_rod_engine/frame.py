@@ -4,7 +4,6 @@ from typing import Optional, List
 # From third-party
 import numpy as np
 import h5py
-from notebook.extensions import RED_X
 
 
 class Frame():
