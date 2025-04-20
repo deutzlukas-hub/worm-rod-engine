@@ -10,7 +10,7 @@ from worm_rod_engine.parameter.output_parameter import output_parameter_parser
 from worm_rod_engine.worm import Worm
 from worm_rod_engine.util import v2f, f2n
 
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+warnings.filterwarnings("ignore", category=np.exceptions.VisibleDeprecationWarning)
 
 class TestAssembler(unittest.TestCase):
 

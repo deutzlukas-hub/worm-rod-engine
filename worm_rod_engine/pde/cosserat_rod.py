@@ -109,8 +109,8 @@ class PDE_Cosserat(ABC):
         # Assign (r, theta) tuple in [V2, V] to u in W
         fa = FunctionAssigner(self.W, [self.function_spaces['r'], self.function_spaces['theta']])
 
-        if isinstance(F0, Frame):
-            for u_old_n, F in zip(self.u_old_arr, F_past_arr):
+        if F0 is None or isinstance(F0, Frame):
+            for u_old_n in self.u_old_arr:
                 fa.assign(u_old_n, [r0, theta0])
         elif isinstance(F0, FrameSequence):
             pass

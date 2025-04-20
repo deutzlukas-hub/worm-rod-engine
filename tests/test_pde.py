@@ -10,7 +10,7 @@ from worm_rod_engine.worm import Worm
 from worm_rod_engine.util import v2f, f2n
 from worm_rod_engine.pde.util import finite_backwards_difference, finite_difference_coefficients
 
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+warnings.filterwarnings("ignore", category=np.exceptions.VisibleDeprecationWarning)
 
 fdc_expected = {
     (1, 1): np.array([-1.0, 1.0]),

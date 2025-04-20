@@ -24,7 +24,7 @@ from worm_rod_engine.parameter.output_parameter import default_output_parameter
 from worm_rod_engine.pde.cosserat_rod_2D import CosseratRod2D
 from worm_rod_engine.pde.cosserat_rod_3D import CosseratRod3D
 
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+warnings.filterwarnings("ignore", category=np.exceptions.VisibleDeprecationWarning)
 
 if False:
     from fenics import dx
@@ -122,8 +122,6 @@ class Worm:
                     self.PDE.k0.t = self.t
                 if isinstance(self.PDE.k0.t, cppConstant):
                     self.PDE.k0.t.assign(self.t)
-
-
 
     def _picard_iteration(self):
 
