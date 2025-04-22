@@ -4,7 +4,7 @@
 
 Follow these steps to set up your developement environment.
 
-1. Create conda/mamba environment from `environment.yml` file
+1. Use to conda create python environment from `environment.yml` file
 ```
 conda env create -f environment.yml
 ```
@@ -12,7 +12,11 @@ conda env create -f environment.yml
 ```
 conda activate worm-rod-engine
 ```
-3. Open a Python shell and try importing the package to very installation
+3. Use pip to add the worm-rod-engine package defined in `setup.py` to the active environment 
+```
+pip install -e .
+```
+3. Open a Python shell and try to import worm-rod-engine to very installation
 ```
 >>> import worm_rod_engine
 ```
@@ -23,8 +27,8 @@ The main functionality is provided through the `worm-rod-engine.worm.Worm` class
 
 ## Running Tests
 
-To ensure everything is working correctly, run the tests with
+To ensure everything is working correctly, run all unit-tests with
 ```
 python tests/run_tests.py
 ``` 
-This commond excutes all tests defined in the `tests` directory. 
+

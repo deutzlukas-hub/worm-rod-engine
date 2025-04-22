@@ -2,14 +2,13 @@ name: worm-rod-engine
 channels:
   - conda-forge
 dependencies:
-  - numpy
+  - pip
   - fenics
   - pint
   - matplotlib
   - tqdm
   - scipy
   - h5py
-  - pip
-  - pip:
-      - -e .
+
+
 
