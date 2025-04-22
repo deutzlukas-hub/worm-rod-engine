@@ -290,7 +290,7 @@ class CosseratRod2D(PDE_Cosserat):
         '''
         Fluid drag force line density
         '''
-        return -self.K_n * theta_t
+        return -self.K_y* self.K_n * theta_t
 
     @tag_function_space('V2')
     def N_(self, eps, eps_t):
