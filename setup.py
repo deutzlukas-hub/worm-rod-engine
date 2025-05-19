@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='worm-rod-engine',
@@ -6,7 +6,7 @@ setup(
     author='Lukas Deutz',
     author_email='DeutzLukas@protonmail.com',
     description=('Implementation of an active Cosserat rod immersed in viscous environment suited to simulate the locomotion of slender organism'),
-    packages=['worm_rod_engine'],
+    packages=find_packages(),
     # pip installation of fenics is not stable use environmen.yml instead
     install_requires=[
         #'fenics',
