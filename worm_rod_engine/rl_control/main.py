@@ -11,9 +11,8 @@ from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
 
 print('Finished importing python libraries.')
 
-from parameters.parameters_main import parameters_main
-from functions.generate_mujoco_xml_main import generate_mujoco_xml_main
-from output.save_results_main import save_results_main
+from parameters import parameters
+from save_results import save_results
 
 print('Finished importing files.')
 
@@ -36,12 +35,12 @@ if(len(sys.argv) >= 3): # If an existing model is provided.
         with open(f'{model_path}/parameters.pkl', 'rb') as f:
             P = pickle.load(f)
         
-        from parameters.insect.training_params import training_params
+        from training_params import training_params
         P["training"] = training_params(use_gpu=False, T=P["T"], dt=P["dt_opt"], animal=P['animal'])
     else:
-        P = parameters_main()
+        P = parameters()
 else: # Create a new model.
-    P = parameters_main(animal)
+    P = parameters()
     
     direction = "forward" if P["direction"] == 1 else "backward"
     name = f"{P['animal']}_{P['gait']}_{direction}_T={str(P['T'])}_dt={str(P['dt'])}_dt-opt={str(P['dt_opt'])}"
@@ -50,21 +49,9 @@ else: # Create a new model.
     model_file = f"model_{name}_{current_datetime.strftime('%Y%m%d%H%M%S')}"
     model_path = f"resources/results/{P['animal']}/{model_file}/"
 
-# Generate xml model
-generate_mujoco_xml_main(P=P, animal=P["animal"]) # , main_dir=main_dir, model_file_name=P["physical_model"]["file_name"])
-time.sleep(2) # A short delay to ensure the xml file has been created.
-
 def make_env():
     model_path = os.path.join(main_dir, 'envs', 'mujoco', 'assets', P["physical_model"]["file_name"] + ".xml")
-
-    match P["animal"]:
-        case "mole_cricket" | "desert_locust" | "half_cheetah" | "carpenter_ant":
-            return gym.make(P["env"], P=P, xml_file=model_path, max_episode_steps=P["training"]["steps_per_episode"])
-        case "worm":
-            return gym.make(P["env"], P=P, max_episode_steps=P["training"]["steps_per_episode"])
-        case _:
-            return "Unknown input. Cannot create environment."
-
+    return gym.make(P["env"], P=P, max_episode_steps=P["training"]["steps_per_episode"])
     
 def main():
     env, model = get_env_and_model()
@@ -80,7 +67,7 @@ def main():
         pickle.dump(P, f)
     
     env.close()
-    save_results_main(model=model, P=P, model_path=model_path, model_file=model_file, ep=i)
+    save_results(model=model, P=P, model_path=model_path, model_file=model_file, ep=i)
     
 def get_env_and_model():
     

@@ -1,6 +1,6 @@
 import numpy as np
-import os
-from scipy.spatial.transform import Rotation as R
+# import os
+# from scipy.spatial.transform import Rotation as R
 
 # from scipy.io import loadmat
 # from scipy.interpolate import splprep, splev
@@ -9,7 +9,7 @@ import gymnasium as gym
 from gymnasium.spaces import Box
 
 from envs.mujoco.WormEnv import WormEnv
-#from functions.functions_worm import fit_plane_to_point_cloud, get_principal_plane_rotation, interpolate_line
+from functions.worm_functions import fit_plane_to_point_cloud, get_principal_plane_rotation, interpolate_line
 from worm_rod_engine.rl_control.natural_frame_1 import (NaturalFrame, distance_ab, align_complex_vectors)
 
 # Import the simple-worm simulator here
@@ -19,7 +19,7 @@ from worm_rod_engine.parameter.numerical_parameter import numerical_argument_par
 from worm_rod_engine.parameter.dimensionless_parameter import dimensionless_parameter_parser
 from worm_rod_engine.frame import Frame
 
-class WormEnvSimple(gym.Env, WormEnv):
+class WormEnvSimple(gym.Env):
     
     def __init__(
         self,
@@ -31,12 +31,18 @@ class WormEnvSimple(gym.Env, WormEnv):
         self.P = P
         self.record = record
         
-        observation_space = Box(low=self.P["obs"]["range"][0], high=self.P["obs"]["range"][1], shape=(self.P["obs_space"],), dtype=np.float64)
+        # observation_space = Box(low=-np.inf, high=np.inf, shape=(self.P["obs_space"],), dtype=np.float64)
         
         # Load reference midlines
         if(self.P["ref"] and (self.P["gait"] == "infinity" or self.P["gait"] == "coiling")):
             gait = self.P["gait"] + '_' + self.P["chirality"]
             self.ref_data = loadmat(self.P["reward"]["ref_data"][gait]) # 3d array of 3d coordinates [T, N, 3].
+        else:
+            t = np.linspace(0, 2 * np.pi, 128)
+            x = t
+            y = np.sin(t)
+            z = np.zeros_like(t)
+            self.ref_data = np.stack((x, y, z), axis=-1) # 3D coordinates of a 2D sine function.
 
         # Initialize the worm simulator
         output_param = output_parameter_parser.parse_args(['--k', str(True)])
@@ -45,10 +51,8 @@ class WormEnvSimple(gym.Env, WormEnv):
         self.worm = Worm(numerical_param=numerical_param, dimensionless_param=dimensionless_param, output_param=output_param)
 
     def step(self, action):
-        
-        # action.shape = 3*N # twisting, bending DV, bending LR.
 
-        self.increment_time() # This increments self.t, self.frame (the frame of reference experimental data) and self.phase (the phase of synthetically generated reference data).
+        # self.increment_time() # This increments self.t, self.frame (the frame of reference experimental data) and self.phase (the phase of synthetically generated reference data).
         
         # self.update_midlines()
 
@@ -68,7 +72,7 @@ class WormEnvSimple(gym.Env, WormEnv):
         self.t = 0
         # self.phase = 0
         self.frame = np.random.randint(1, self.P["reward"]["ref_data"]["ref_random_pose_num"]) # Select a random ref frame.
-        self.frame_step = 0
+        # self.frame_step = 0
 
         # Initialize the simulated midline to match a reference midline in the sequence
         ref_midline = self.ref_data["XYZ"][self.frame]
@@ -124,18 +128,46 @@ class WormEnvSimple(gym.Env, WormEnv):
         return obs
     
     def update_midlines(self):
-        # Initialize simulated and reference midlines [Np x 3] and their principal plane normal
+        # Initialize and interpolate simulated and reference midlines [Np x 3] and their principal plane normal
         
         if(self.P["ref"] and (self.P["gait"] == "infinity" or self.P["gait"] == "coiling")):
             self.ref_midline = interpolate_line(self.ref_data["XYZ"][self.frame], self.P["Np"]+1)
             self.ref_midline = np.array(self.ref_midline).T
-        elif(self.P["ref"] and (self.P["gait"] == "2d_sine" or self.P["gait"] == "3d_sine")):
-            y_dv, y_lr, x = self.get_ref_midline() # Np+1 points.
-            self.ref_midline = np.array([x, y_dv, y_lr]).T
-        
-        # self.sim_midline = ??? # TODO.
 
     def get_reward(self, model_output):
-        reward = (np.sum(model_output["r"] - self.ref_data["XYZ"][self.frame]) ** 2)**0.5 # Shape difference.
+        
+        terminated = False
+        
+        reward = 0.1
 
-        return reward
+        reward += -1 * self.get_3d_midline_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
+        reward += -1 * self.get_natural_frame_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
+        reward += -1 * self.get_principal_plane_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
+        
+        # Early termination
+        if(0):
+            terminated = True
+
+        return reward, terminated
+    
+    def get_natural_frame_reward(self, ref_midline, sim_midline):
+        # Calculate shape difference
+        n = self.P["reward"]["ref_data"]["n_skip"]
+        ref_nf = NaturalFrame(ref_midline[n:-n]) # [n:-n].
+        sim_nf = NaturalFrame(sim_midline[n:-n]) # [n:-n].
+        shape_error = distance_ab(ref_nf.mc, sim_nf.mc)
+
+        return shape_error
+    
+    def get_3d_midline_reward(self, ref_midline, sim_midline):
+        return (np.sum(sim_midline - ref_midline) ** 2)**0.5
+    
+    def get_principal_plane_reward(self, ref_midline, sim_midline):
+        # Calculate principal plane rotation error
+        pp_angle_diff, self.plane_normal = get_principal_plane_rotation(sim_midline, self.plane_normal_prev)
+        pp_angle_diff_ref, self.plane_normal_ref = get_principal_plane_rotation(ref_midline, self.plane_normal_ref_prev)
+
+        self.plane_normal_prev = self.plane_normal.copy()
+        self.plane_normal_ref_prev = self.plane_normal_ref.copy()
+        
+        return abs(pp_angle_diff - pp_angle_diff_ref) # Add a penalty for the diff between sim and ref plane rotation.

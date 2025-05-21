@@ -1,7 +1,6 @@
 import numpy as np
-import torch
 
-from parameters.worm.training_params import training_params
+from training_params import training_params
 
 def parameters(gait=None):
     train = True
@@ -51,28 +50,7 @@ def parameters(gait=None):
         
         "mechanics": {
             "solver": "RK4", # ["Euler", "Euler"].
-            "init_pos": [0, 0, 0.4*scale], # [cm].
-            "floor_size": str(5*scale) + " " + str(5*scale) + " " + str(20*scale), # [cm].
-            "joint": {
-                "max_joint_angle": 30 * (32 / Np), # degrees. [30].
-                "stiffness": 1, # [dyn·cm/rad]. Unit conversion: 1 N·m = 10^5 dyn × 100 cm = 10^7 dyn·cm.
-                "damping": 0.1, # [dyn·cm/rad].
-                "frictionloss": 0.0, # [dyn·cm/rad].
-                "armature": 0.1,
-                "gear_ratio": 20 if gait == "coiling" else 30, # Infinity=[*30*,40,60]. Coiling=*20*.
-            },
-            "geom": {
-                "mass": 1e-6, # g.
-                # "density": 1, # g/cm³.
-                "segment_length": 0.5 * np.round(0.02 * (32 / Np) * scale, 5), # [cm].
-                "segment_width": 0.01 * scale, # [cm].
-                "segment_depth": 0.005 * scale, # [cm].
-            },
-            "medium": {
-                "gravity": "0 0 0", # [0, -0.05, -0.1, -9.8].
-                "density": 100000, # g/cm³.
-                "viscosity": 0.01, # [g/(cm·s)].
-            },
+            # "init_pos": [0, 0, 0.4*scale], # [cm].
         },
         
         "physical_model": {
@@ -112,7 +90,7 @@ def parameters(gait=None):
         },
     }
     
-    P["mechanics"]["head_size"] = str(P["mechanics"]["geom"]["segment_width"]) + " " + str(P["mechanics"]["geom"]["segment_length"]) + " " + str(P["mechanics"]["geom"]["segment_width"])
+    # P["mechanics"]["head_size"] = str(P["mechanics"]["geom"]["segment_width"]) + " " + str(P["mechanics"]["geom"]["segment_length"]) + " " + str(P["mechanics"]["geom"]["segment_width"])
     
     P["training"] = training_params(use_gpu=train, T=P["T"], dt=P["dt_opt"], animal=P['animal'])
     
