@@ -1,3 +1,4 @@
+import os
 import torch
 
 def training_params(use_gpu=False, T=0.5, dt=0.01, animal="animal"):

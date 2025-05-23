@@ -2,7 +2,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
-from functions.functions_worm import fit_plane_to_point_cloud, get_principal_plane_rotation
+from worm_rod_engine.rl_control.worm_functions import fit_plane_to_point_cloud, get_principal_plane_rotation
 
 def principal_plane_angle(P, midlines, save_dir, ep, ref_data, ref_frames):
 	

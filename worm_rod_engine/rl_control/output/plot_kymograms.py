@@ -4,7 +4,7 @@ from scipy.io import savemat
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 
-from functions.frames.TNB import TNB
+# from worm_rod_engine.rl_control.worm_functions import    #functions.frames.TNB import TNB
 
 def plot_kymograms(P, midlines, qpos, actions, save_dir, ep, ref_data, ref_frames):
     

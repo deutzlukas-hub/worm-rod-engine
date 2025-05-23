@@ -7,7 +7,7 @@ import datetime
 import pickle
 
 from stable_baselines3 import PPO # [PPO, SAC] Import RL agent.
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor
 
 print('Finished importing python libraries.')
 
@@ -17,6 +17,8 @@ from save_results import save_results
 print('Finished importing files.')
 
 main_dir = os.path.dirname(__file__)
+DEBUG = True
+
 
 # Set animal model
 if(len(sys.argv) >= 2): # If an animal name is provided.
@@ -55,14 +57,21 @@ def make_env():
     
 def main():
     env, model = get_env_and_model()
-    
+
+    # register(
+    #     id='my-env-v0',  # Unique identifier
+    #     entry_point='my_module:MyEnv',  # Where to find the Env class
+    #     max_episode_steps=1000,  # Default episode length
+    #     kwargs={'param': value}  # Default parameters
+    # )
+
     for i in range(P["training"]["batch_num"]):
         if(P["training"]["device"] == "cuda"):
             model.learn(total_timesteps=P["training"]["steps_per_batch"], tb_log_name=name, reset_num_timesteps=(i==0))
-            
             model.save(model_path + os.sep + model_file + '.zip') # Save the model.
             print("Done training. Model Saved.")
-    
+
+
     with open(f'{model_path}/parameters.pkl', 'wb') as f:
         pickle.dump(P, f)
     
@@ -72,7 +81,11 @@ def main():
 def get_env_and_model():
     
     # Set RL environment(s)
-    env = SubprocVecEnv([make_env for _ in range(P["training"]["n_envs"])])
+
+    if DEBUG:
+        env = DummyVecEnv([make_env for _ in range(P["training"]["n_envs"])])
+    else:
+        env = SubprocVecEnv([make_env for _ in range(P["training"]["n_envs"])])
     
     env = VecMonitor(env, P["training"]["tensorboard_log_path"])
     print("Action space:", env.action_space)

@@ -3,8 +3,8 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 
-from functions.functions_worm import fit_plane_to_point_cloud, get_mean_tangent, interpolate_line
-from functions.frames.natural_frame_1 import NaturalFrame, distance_ab
+from worm_rod_engine.rl_control.worm_functions import fit_plane_to_point_cloud, get_mean_tangent, interpolate_line
+from worm_rod_engine.rl_control.natural_frame_1 import NaturalFrame, distance_ab
 
 def record_video(P, midlines, save_dir, ep, ref_data, ref_frames):
     
