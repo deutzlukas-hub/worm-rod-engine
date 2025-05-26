@@ -1,13 +1,13 @@
 import os
-import gymnasium as gym
-import torch
 import sys
-import time
 import datetime
 import pickle
 
+import gymnasium as gym
 from stable_baselines3 import PPO # [PPO, SAC] Import RL agent.
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor
+
+from WormEnvSimple import WormEnvSimple
 
 print('Finished importing python libraries.')
 
@@ -56,14 +56,8 @@ def make_env():
     return gym.make(P["env"], P=P, max_episode_steps=P["training"]["steps_per_episode"])
     
 def main():
+    gym.register(P["env"], entry_point=WormEnvSimple)
     env, model = get_env_and_model()
-
-    # register(
-    #     id='my-env-v0',  # Unique identifier
-    #     entry_point='my_module:MyEnv',  # Where to find the Env class
-    #     max_episode_steps=1000,  # Default episode length
-    #     kwargs={'param': value}  # Default parameters
-    # )
 
     for i in range(P["training"]["batch_num"]):
         if(P["training"]["device"] == "cuda"):

@@ -31,7 +31,18 @@ class WormEnvSimple(gym.Env):
         self.record = record
         self.episode_length = 50
 
-        # observation_space = Box(low=-np.inf, high=np.inf, shape=(self.P["obs_space"],), dtype=np.float64)
+        N = 50  # number of points along each midline
+        action_size = 3 * N
+
+        # Define action space as a continuous Box
+        self.action_space = gym.spaces.Box(
+            low=--10,  # Minimum value for each action
+            high=+10,  # Maximum value for each action
+            shape=(action_size,),  # Flattened shape (will be reshaped to (3, N) in step)
+            dtype=np.float32  # Data type for actions
+        )
+
+        self.observation_space = Box(low=-np.inf, high=np.inf, shape=(self.P["obs_space"],), dtype=np.float64)
         
         # Load reference midlines
         # if(self.P["ref"] and (self.P["gait"] == "infinity" or self.P["gait"] == "coiling")):
@@ -46,7 +57,6 @@ class WormEnvSimple(gym.Env):
             # self.ref_data = np.stack((x, y, z), axis=-1) # 3D coordinates of a 2D sine function.
 
             # parameters
-            N = 50  # number of points along each midline
             L = 1.0  # length of midline in X
             A = 0.1  # sine amplitude (in Y)
 
@@ -92,6 +102,8 @@ class WormEnvSimple(gym.Env):
         numerical_param = numerical_argument_parser.parse_args(['--dt', str(dt), '--N', str(N)]) # , '--dt_report', '1e-2', '--N_report', '128' str(self.P["dt"])
         dimensionless_param = dimensionless_parameter_parser.parse_args()
         self.worm = Worm(numerical_param=numerical_param, dimensionless_param=dimensionless_param, output_param=output_param)
+
+        action_size = 3*N
 
     def step(self, action):
 
