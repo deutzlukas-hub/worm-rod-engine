@@ -16,9 +16,10 @@ def training_params(use_gpu=False, T=0.5, dt=0.01, animal="animal"):
         "verbose": 1,
         "tensorboard_log_path": f"resources/results/{animal}/tensorboard_log/",
     }
-    
+
+    print(f'torch cuda available: {torch.cuda.is_available()}')
     # use_gpu = False
-    if(use_gpu and torch.cuda.is_available()):
+    if (use_gpu and torch.cuda.is_available()) or True:
         P["device"] = "cuda"
         P["n_envs"] = 1
         

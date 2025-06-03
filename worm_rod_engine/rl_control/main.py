@@ -17,7 +17,7 @@ from save_results import save_results
 print('Finished importing files.')
 
 main_dir = os.path.dirname(__file__)
-DEBUG = True
+DEBUG = False
 
 
 # Set animal model
@@ -64,7 +64,6 @@ def main():
             model.learn(total_timesteps=P["training"]["steps_per_batch"], tb_log_name=name, reset_num_timesteps=(i==0))
             model.save(model_path + os.sep + model_file + '.zip') # Save the model.
             print("Done training. Model Saved.")
-
 
     with open(f'{model_path}/parameters.pkl', 'wb') as f:
         pickle.dump(P, f)
