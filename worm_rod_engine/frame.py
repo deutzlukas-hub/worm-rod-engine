@@ -52,10 +52,14 @@ class Frame():
 
     def euler_angles_from_body_frame(self):
 
-        Q = np.stack([self.d1, self.d2, self.d3], axis=1)
+        Q = np.zeros((3, 3, self.d1.shape[-1]))
+
+        Q[0, :, :] = self.d1
+        Q[1, :, :] = self.d2
+        Q[2, :, :] = self.d3
 
         alpha = np.arctan2(Q[1, 0, :], Q[0, 0 , :])
-        beta = np.arcsin(-Q[2, 1, :])
+        beta = np.arcsin(-Q[2, 0, :])
         gama = np.arctan2(Q[2, 1, :], Q[2, 2, :])
 
         self.theta = np.row_stack([alpha, beta, gama])

@@ -39,7 +39,7 @@ def parameters(gait=None):
         "direction": direction, # +1=forward. -1=backward.
         "env": "worm-env",
         
-        "obs_space": 7 + 6, # Position, orientation and velocity of the torso. Position: 7=[x,y,z, θx,θy,θz,θw]. Velocity: 6=[dx,dy,dz,dθx,dθy,dθz].
+        "obs_space": None, # Position, orientation and velocity of the torso. Position: 7=[x,y,z, θx,θy,θz,θw]. Velocity: 6=[dx,dy,dz,dθx,dθy,dθz].
         "action_space": 0,
         
         "exclude_xyz_from_obs": 7, # If > 0, 3=[x,y,z] or 7=[x,y,z,θx,θy,θz,θw] are removed from the observation space.
@@ -74,7 +74,7 @@ def parameters(gait=None):
                 "coiling_ccw": "./resources/ref_data/coiling/233_20180809_trial05_F1=[5450,5850]_XYZ_CCW.mat",
                 "curvature_scaling": 0.41 * 200, # TODO: find the curvature scale of sim and ref, and scale ref curvature accordingly.
                 "n_eval": 64, # Number of points to resample the ref lines.
-                "n_skip": int(round(0.05*Np)), # [0.05]. Number of points to skip from the extremes when comparing m1 and m2 between sim and ref.
+                "n_skip": None, #int(round(0.05*Np)), # [0.05]. Number of points to skip from the extremes when comparing m1 and m2 between sim and ref.
                 "ref_pose_num": 200, # [cw=*200*, ccw=400].
                 "ref_random_pose_num": 150, # [100, infinity=150, cw=*150*, 50, ccw=*350*].
                 "opt_max_iter": 500,
@@ -93,26 +93,26 @@ def parameters(gait=None):
     # P["mechanics"]["head_size"] = str(P["mechanics"]["geom"]["segment_width"]) + " " + str(P["mechanics"]["geom"]["segment_length"]) + " " + str(P["mechanics"]["geom"]["segment_width"])
     
     P["training"] = training_params(use_gpu=train, T=P["T"], dt=P["dt_opt"], animal=P['animal'])
-    
-    if(P["exclude_xyz_from_obs"]):
-        P["obs_space"] -= P["exclude_xyz_from_obs"] # [3,7].
-    
-    if(P["include_shape_diff_in_obs"]):
-        P["obs_space"] += 1*(P["Np"]+1) # Real and imaginary diffs of the complex representation of m1 and m2.
-        # P["obs_space"] += 2*(P["Np"]+1) # Real and imaginary diffs of the complex representation of m1 and m2.
-    
-    if(P["include_ref_frame_in_obs"]):
-        P["obs_space"] += 1
-    
-    if(P["include_next_ref_frame_in_obs"]):
-        P["obs_space"] += 1
-    
-    if(P["include_ref_shape_in_obs"]):
-        P["obs_space"] += 1*(P["Np"]+1)
-    
-    P["obs_space"] += 4*(P["Np"]-1) # Np segments are connected via (Np-1) joints (x2). Each joint is associated with an angle and angular velocity.
+    # TODO: Clean this up
+    # if(P["exclude_xyz_from_obs"]):
+    #     P["obs_space"] -= P["exclude_xyz_from_obs"] # [3,7].
+    #
+    # if(P["include_shape_diff_in_obs"]):
+    #     P["obs_space"] += 1*(P["Np"]+1) # Real and imaginary diffs of the complex representation of m1 and m2.
+    #     # P["obs_space"] += 2*(P["Np"]+1) # Real and imaginary diffs of the complex representation of m1 and m2.
+    #
+    # if(P["include_ref_frame_in_obs"]):
+    #     P["obs_space"] += 1
+    #
+    # if(P["include_next_ref_frame_in_obs"]):
+    #     P["obs_space"] += 1
+    #
+    # if(P["include_ref_shape_in_obs"]):
+    #     P["obs_space"] += 1*(P["Np"]+1)
+    #
+    # P["obs_space"] += 4*(P["Np"]-1) # Np segments are connected via (Np-1) joints (x2). Each joint is associated with an angle and angular velocity.
     P["obs_minmax"] = np.inf # P["mechanics"]["max_joint_angle"] * (np.pi/180)
-    
+    #
     # P["action_space"] = 4*(P["Np"]-1)
     
     # print("Scale =", P["scale"])

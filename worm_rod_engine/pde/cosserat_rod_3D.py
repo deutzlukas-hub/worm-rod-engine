@@ -280,8 +280,17 @@ class CosseratRod3D(PDE_Cosserat):
         Centreline velocity
         '''
         r_old_arr = [split(u)[0] for u in self.u_old_arr]
-        r_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, r, r_old_arr)
+        r_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, r, r_old_arr, self.worm.numerical_param.dt)
         return r_t
+
+    @tag_function_space('V3')
+    def theta_t(self, theta):
+        '''
+        Centreline velocity
+        '''
+        theta_old_arr = [split(u)[1] for u in self.u_old_arr]
+        theta_t = finite_backwards_difference(1, self.worm.numerical_param.fdo, theta, theta_old_arr, self.worm.numerical_param.dt)
+        return theta_t
 
 
     @staticmethod
@@ -296,7 +305,6 @@ class CosseratRod3D(PDE_Cosserat):
     #================================================================================================
     # Shape variables and rates
     #================================================================================================
-
     @staticmethod
     @tag_function_space('V3')
     def eps(Q, r):

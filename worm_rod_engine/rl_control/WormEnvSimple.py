@@ -1,3 +1,6 @@
+from typing import Optional
+from fenics import Constant
+
 import numpy as np
 # import os
 # from scipy.spatial.transform import Rotation as R
@@ -34,9 +37,11 @@ class WormEnvSimple(gym.Env):
         N = 50  # number of points along each midline
         action_size = 3 * N
 
+        self.P['obs_space'] = 6 * N
+
         # Define action space as a continuous Box
         self.action_space = gym.spaces.Box(
-            low=--10,  # Minimum value for each action
+            low=-10,  # Minimum value for each action
             high=+10,  # Maximum value for each action
             shape=(action_size,),  # Flattened shape (will be reshaped to (3, N) in step)
             dtype=np.float32  # Data type for actions
@@ -111,19 +116,24 @@ class WormEnvSimple(gym.Env):
         
         # self.update_midlines()
 
+        self.frame += 1
+
         k0 = np.array(action).reshape((3, self.worm.N))
         self.worm.update_state(k0=k0, assemble=True) # Update the state of the worm.
-        
+
+        print(self.frame)
+
         observation = self._get_obs(self.worm.assembler.output)
         
-        reward, terminated = self.get_reward()
+        reward, terminated = self.get_reward(self.worm.assembler.output)
         
         info = {"sim_midline": self.worm.assembler.output["r"], "ref_midline": self.ref_data[self.frame], "ref_frame": self.frame} # TODO.
         
         return observation, reward, terminated, False, info
     
-    def reset_model(self):
-        
+    def reset(self, *, seed = None, options = None):
+        super().reset(seed=seed)
+
         self.t = 0
         # self.phase = 0
         #self.frame = np.random.randint(1, self.P["reward"]["ref_data"]["ref_random_pose_num"]) # Select a random ref frame.
@@ -136,7 +146,8 @@ class WormEnvSimple(gym.Env):
         #ref_midline = self.ref_data["XYZ"][self.frame]
 
         # ref_midline_previous = self.ref_data["XYZ"][self.frame-1]
-        ref_nf = NaturalFrame(self.ref_data[self.frame])
+
+        ref_nf = NaturalFrame(self.ref_data[self.frame].T)
 
 
         # ref_prev_nf = NaturalFrame(ref_midline_previous)
@@ -152,24 +163,40 @@ class WormEnvSimple(gym.Env):
         # Initialize the frame with the reference midline
         F0 = Frame(
             r=ref_nf.X.T,
-            d1=ref_nf.M1,
-            d2=ref_nf.M2,
-            d3=ref_nf.T,
+            d1=ref_nf.M1.T,
+            d2=ref_nf.M2.T,
+            d3=ref_nf.T.T,
             t=(self.frame * self.P["dt_exp"]) # self.t/self.P["frame_skip"]
         )
         
         F0.euler_angles_from_body_frame()
+        F0.body_frame_euler_angles()
+
+        assert np.allclose(F0.d1, ref_nf.M1.T)
+        assert np.allclose(F0.d2, ref_nf.M2.T)
+        assert np.allclose(F0.d3, ref_nf.T.T)
 
         # F1 = None # create a frame for the previous midline.
         # F = None # create a frame sequence with F1 and F0.
-        
-        self.worm.initialise(F0=F0) # , F_arr_past=F
+        # TODO: Add history to calculate propper derivatives
+        eps0 = Constant((0.0, 0.0, 0.0))
+        k0 = np.zeros((3, self.worm.N))
+        self.worm.initialise(F0=F0, eps0=eps0, k0=k0)
+
+        # TODO: Refactor calculate output from the initial state.
+        u = self.worm.PDE.u_old_arr[-1]
+        r, theta = u.split(deepcopy=True)
+        self.worm.assembler.update_state(r, theta, self.worm.t)
+        self.worm.assembler.assemble_output()
+        self.worm.assembler.cache.clear()
 
         # self.worm.assembler.output["r"] # midline.
         # self.worm.assembler.output["r_t"] # time derivative of r.
-        
+        # TODO: Sainity check if observatiions look reasonable.
         observation = self._get_obs(self.worm.assembler.output)
-        
+
+        reset_info = {}
+
         # self.update_midlines() # Initialize simulated and reference midlines [Np x 3] and their principal plane normal
         # self.plane_normal_prev = fit_plane_to_point_cloud(self.sim_midline)
         # self.plane_normal_ref_prev = fit_plane_to_point_cloud(self.ref_midline)
@@ -178,12 +205,12 @@ class WormEnvSimple(gym.Env):
         # Override the initial simulated midline. Match its shape with the shape of the initial reference midline (self.frame).
         # Make sure to adjust the initial frame such that DV takes most of the curvature.
         
-        return observation
+        return observation, reset_info
     
     def _get_obs(self, model_output):
         
         #obs = np.concatenate((model_output["r"], model_output["r_t"])) # Midline and midline velocity.
-        obs = np.concatenate((model_output["k"], model_output["k_t"])) # Curvature and change in curvature.
+        obs = np.concatenate((model_output["k"].flatten(), model_output["k_t"].flatten())) # Curvature and change in curvature.
         # obs = (self.frame) # Frame number.
         
         return obs
@@ -202,7 +229,7 @@ class WormEnvSimple(gym.Env):
         reward = 0.1
 
         # reward += -1 * self.get_3d_midline_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
-        reward += -1 * self.get_natural_frame_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
+        reward += -1 * self.get_natural_frame_reward(self.ref_data[self.frame], model_output["r"])
         # reward += -1 * self.get_principal_plane_reward(self.ref_data["XYZ"][self.frame], model_output["r"])
         
         # Early termination
@@ -214,8 +241,14 @@ class WormEnvSimple(gym.Env):
     def get_natural_frame_reward(self, ref_midline, sim_midline):
         # Calculate shape difference
         n = self.P["reward"]["ref_data"]["n_skip"]
-        ref_nf = NaturalFrame(ref_midline[n:-n]) # [n:-n].
-        sim_nf = NaturalFrame(sim_midline[n:-n]) # [n:-n].
+
+        if n is None:
+            ref_nf = NaturalFrame(ref_midline.T)
+            sim_nf = NaturalFrame(sim_midline.T)
+        else:
+            ref_nf = NaturalFrame(ref_midline.T[n:-n]) # [n:-n].
+            sim_nf = NaturalFrame(sim_midline.T[n:-n]) # [n:-n].
+
         shape_error = distance_ab(ref_nf.mc, sim_nf.mc)
 
         return shape_error
@@ -232,21 +265,4 @@ class WormEnvSimple(gym.Env):
         self.plane_normal_ref_prev = self.plane_normal_ref.copy()
         
         return abs(pp_angle_diff - pp_angle_diff_ref) # Add a penalty for the diff between sim and ref plane rotation.
-
-if __name__ == '__main__':
-
-    env = WormEnvSimple()
-    print(env.frame_count)
-
-    # import matplotlib.pyplot as plt
-    #
-    # ax = plt.subplot(111)
-    # for midline in env.ref_data:
-    #     ax.plot(midline[0, :], midline[1, :], '-o')
-    #
-    # plt.show()
-    #
-
-
-
 

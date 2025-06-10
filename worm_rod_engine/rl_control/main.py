@@ -17,7 +17,7 @@ from save_results import save_results
 print('Finished importing files.')
 
 main_dir = os.path.dirname(__file__)
-DEBUG = False
+DEBUG = True
 
 
 # Set animal model
@@ -52,11 +52,15 @@ else: # Create a new model.
     model_path = f"resources/results/{P['animal']}/{model_file}/"
 
 def make_env():
-    model_path = os.path.join(main_dir, 'envs', 'mujoco', 'assets', P["physical_model"]["file_name"] + ".xml")
-    return gym.make(P["env"], P=P, max_episode_steps=P["training"]["steps_per_episode"])
-    
-def main():
     gym.register(P["env"], entry_point=WormEnvSimple)
+    try:
+        return gym.make(P["env"], P=P, max_episode_steps=P["training"]["steps_per_episode"])
+    except Exception as e:
+        print(f"Error creating environment: {e}")
+        raise
+
+def main():
+
     env, model = get_env_and_model()
 
     for i in range(P["training"]["batch_num"]):

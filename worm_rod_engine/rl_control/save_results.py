@@ -34,7 +34,7 @@ def save_results(model=None, P=None, model_path=None, model_file=None, ep=0):
         
         env = gym.make(P["env"], P=P, record=True, xml_file=mujoco_model_path, max_episode_steps=steps_per_episode, render_mode="rgb_array", camera_name=P["rendering"]["camera_mode"])
         
-        obs, info = env.reset(seed=i)
+        obs, info = env.reset()
         
         env = gym.wrappers.RecordVideo(env, video_folder=model_path, name_prefix=f"{P['animal']}_{direction}_{P['gait']}_ep={ep}_{i}_cam0")
         
